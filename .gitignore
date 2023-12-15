@@ -1,3 +1,6 @@
+# Final build output from MathJax
+bundle
+
 # Logs
 logs
 *.log
@@ -89,7 +92,8 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+dist/*
+!dist/config.json
 
 # Gatsby files
 .cache/

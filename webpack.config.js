@@ -2,19 +2,14 @@
 
 import { URL } from "url";
 
-import PACKAGE from "./node_modules/mathjax-full/components/webpack.common.js";
+import { PACKAGE } from "mathjax-full/components/webpack.common.cjs";
 
-const fileDirectory = new URL("./src", import.meta.url).pathname;
-const distDirectory = "../dist";
+const distDirectory = new URL("./dist", import.meta.url).pathname;
+const options = {
+  name: "controlflow",
+  js: distDirectory,
+  libs: ["components/src/core/lib", "components/src/input/tex-base/lib"],
+  dir: distDirectory,
+};
 
-export default PACKAGE(
-  "controlflow", // the package to build
-  "node_modules/mathjax-full/js", // location of the MathJax js library
-  [
-    // packages to link to
-    "components/src/core/lib",
-    "components/src/input/tex-base/lib",
-  ],
-  fileDirectory,
-  distDirectory,
-);
+export default PACKAGE(options);

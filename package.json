@@ -3,15 +3,18 @@
   "type": "module",
   "scripts": {
     "prepare": "husky install",
-    "build": "webpack"
+    "build": "pnpm tsc; node ./node_modules/mathjax-full/components/bin/pack mjs bundle ./dist"
   },
   "dependencies": {
     "@babel/core": "^7.23.6",
     "@babel/preset-env": "^7.23.6",
     "babel-loader": "^9.1.3",
-    "mathjax-full": "^3.2.2"
+    "mathjax-full": "^4.0.0-beta.4",
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^8.0.3",

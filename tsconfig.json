@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "ES5",
+    "strict": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "mathjax-full": ["node_modules/mathjax-full"]
+    },
+    "lib": ["ES6", "DOM", "ES2020"],
+    "sourceMap": true
+  },
+  "include": ["src/**/*"]
+}
