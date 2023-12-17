@@ -1,5 +1,8 @@
-# Final build output from MathJax
-bundle
+# TypeScript output directory
+js/
+# build output from MathJax
+components/lib/
+browser/
 
 # Logs
 logs

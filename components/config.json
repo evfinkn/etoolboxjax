@@ -4,7 +4,12 @@
     "component": "input/tex/extension/etoolbox",
     "js": "../js",
     "ts": "../ts",
-    "targets": ["etoolbox.ts"]
+    "targets": [
+      "EtoolboxConfiguration.ts",
+      "EtoolboxMappings.ts",
+      "EtoolboxMethods.ts",
+      "EtoolboxUtil.ts"
+    ]
   },
   "webpack": {
     "name": "etoolbox",
