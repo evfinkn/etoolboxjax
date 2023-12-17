@@ -1,10 +1,18 @@
 {
   "compilerOptions": {
     "module": "NodeNext",
-    "target": "ES5",
-    "strict": true,
-    "rootDir": "src",
-    "outDir": "dist",
+    "target": "ES6",
+    "downlevelIteration": true,
+    "declaration": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    // "rootDir": "ts",
+    "outDir": "js",
     "baseUrl": ".",
     "paths": {
       "mathjax-full": ["node_modules/mathjax-full"]
@@ -12,5 +20,5 @@
     "lib": ["ES6", "DOM", "ES2020"],
     "sourceMap": true
   },
-  "include": ["src/**/*"]
+  "include": ["ts/**/*"]
 }
