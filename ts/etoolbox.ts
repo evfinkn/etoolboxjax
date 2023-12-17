@@ -1,14 +1,15 @@
 import { Configuration } from "mathjax-full/js/input/tex/Configuration.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
-import { Macro, Token } from "mathjax-full/js/input/tex/Token.js";
+import { Macro } from "mathjax-full/js/input/tex/Token.js";
 import { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 import TexParser from "mathjax-full/js/input/tex/TexParser.js";
-import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
-import { StackItem } from "mathjax-full/js/input/tex/StackItem.js";
 import { MmlNode } from "mathjax-full/js/core/MmlTree/MmlNode.js";
 
-const ControlflowMethods: Record<string, ParseMethod> = {};
+export const ETOOLBOX_COMMAND_MAP = "etoolbox-commands";
+export const ETOOLBOX_CHARACTER_MAP = "etoolbox-characters";
+
+const EtoolboxMethods: Record<string, ParseMethod> = {};
 
 /**
  * Implements `\if<token1><token2>`.
@@ -18,7 +19,7 @@ const ControlflowMethods: Record<string, ParseMethod> = {};
  * @param {TexParser} parser The active tex parser.
  * @param {string} name The name of the macro being processed.
  */
-ControlflowMethods.If = function (parser: TexParser, name: string) {
+EtoolboxMethods.If = function (parser: TexParser, name: string) {
   try {
     console.debug("itemFactory", parser.itemFactory);
     console.debug("controlflow", name);
@@ -43,7 +44,7 @@ ControlflowMethods.If = function (parser: TexParser, name: string) {
   }
 };
 
-ControlflowMethods.Else = function (parser: TexParser, name: string) {
+EtoolboxMethods.Else = function (parser: TexParser, name: string) {
   console.debug("controlflow", name);
   const top = parser.stack.Top();
   console.debug("top", top);
@@ -56,7 +57,7 @@ ControlflowMethods.Else = function (parser: TexParser, name: string) {
   top.setProperty("elseBody", parser.ParseArg(name));
 };
 
-ControlflowMethods.Fi = function (parser: TexParser, name: string) {
+EtoolboxMethods.Fi = function (parser: TexParser, name: string) {
   console.debug("controlflow", name);
   const top = parser.stack.Top();
   console.debug("top", top);
@@ -76,15 +77,15 @@ ControlflowMethods.Fi = function (parser: TexParser, name: string) {
 };
 
 new CommandMap(
-  "controlflow",
+  "etoolbox",
   {
     if: "If",
     else: "Else",
     fi: "Fi",
   },
-  ControlflowMethods,
+  EtoolboxMethods,
 );
 
-export const controlflowConfiguration = Configuration.create("controlflow", {
-  handler: { macro: ["controlflow"] },
+export const EtoolboxConfiguration = Configuration.create("etoolbox", {
+  handler: { macro: ["etoolbox"] },
 });

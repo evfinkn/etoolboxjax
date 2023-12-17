@@ -1,5 +1,5 @@
 {
-  "name": "mathjax-controlflow",
+  "name": "etoolboxjax",
   "type": "module",
   "scripts": {
     "prepare": "husky install",

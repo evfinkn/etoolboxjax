@@ -1,13 +1,13 @@
 {
   "build": {
-    "id": "[controlflow]/controlflow",
-    "component": "input/tex/extension/controlflow",
+    "id": "[etoolbox]/etoolboxjax",
+    "component": "input/tex/extension/etoolbox",
     "js": "../js",
     "ts": "../ts",
-    "targets": ["controlflow.ts"]
+    "targets": ["etoolbox.ts"]
   },
   "webpack": {
-    "name": "controlflow",
+    "name": "etoolbox",
     "js": "../js",
     "libs": ["components/src/core/lib", "components/src/input/tex-base/lib"],
     "dist": "../browser/"
