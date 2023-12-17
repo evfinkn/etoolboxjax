@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky install",
-    "build": "pnpm tsc; node ./node_modules/mathjax-full/components/bin/pack mjs bundle ./dist"
+    "build": "npx tsc; ./node_modules/mathjax-full/components/bin/makeAll components"
   },
   "dependencies": {
     "@babel/core": "^7.23.6",
