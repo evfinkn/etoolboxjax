@@ -114,38 +114,31 @@ export function GetNumber(parser: TexParser, name: string): number {
   throw new TexError("InvalidNumber", 'Invalid number "%1"', arg);
 }
 
-// The following 3 methods are copied from
+// The following 2 methods are copied from
 // node_modules/mathjax-full/js/input/tex/newcommand/NewcommandUtil.ts
 
 /**
- * Get the next CS name or give an error.
- * @param {TexParser} parser The calling parser.
- * @param {string} cmd The string starting with a control sequence.
+ * Get a control sequence name from a string.
+ * @param {string} str The string to parse as a control sequence name.
+ * @param {string} name The name of the calling command.
+ * @param {boolean} [requireBackslash=false] Whether the control sequence name must
+ *   start with a backslash.
  * @return {string} The control sequence.
  */
-export function GetCSname(parser: TexParser, cmd: string): string {
-  let c = parser.GetNext();
-  if (c !== "\\") {
-    throw new TexError(
-      "MissingCS",
-      "%1 must be followed by a control sequence",
-      cmd,
-    );
-  }
-  let cs = ParseUtil.trimSpaces(parser.GetArgument(cmd));
-  return cs.substring(1);
-}
-
-/**
- * Get a control sequence name as an argument (doesn't require the backslash)
- * @param {TexParser} parser The calling parser.
- * @param {string} name The macro that is getting the name.
- * @return {string} The control sequence.
- */
-export function GetCsNameArgument(parser: TexParser, name: string): string {
-  let cs = ParseUtil.trimSpaces(parser.GetArgument(name));
+export function GetCsName(
+  str: string,
+  name: string,
+  requireBackslash: boolean = false,
+): string {
+  let cs = ParseUtil.trimSpaces(str);
   if (cs.charAt(0) === "\\") {
     cs = cs.substring(1);
+  } else if (requireBackslash) {
+    throw new TexError(
+      "MissingControlSequence",
+      "%1 must be given a control sequence",
+      name,
+    );
   }
   if (!cs.match(/^(.|[a-z]+)$/i)) {
     throw new TexError(
@@ -155,6 +148,33 @@ export function GetCsNameArgument(parser: TexParser, name: string): string {
     );
   }
   return cs;
+}
+
+/**
+ * Get a control sequence name from an argument.
+ * @see GetCsName
+ */
+export function GetCsNameArgument(
+  parser: TexParser,
+  name: string,
+  requireBackslash: boolean = false,
+): string {
+  return GetCsName(parser.GetArgument(name), name, requireBackslash);
+}
+
+/**
+ * Get a control sequence name from an optional argument.
+ * @see GetCsName
+ */
+export function GetCsNameBrackets(
+  parser: TexParser,
+  name: string,
+  requireBackslash: boolean = false,
+): string | null {
+  const optionalArg = parser.GetBrackets(name, "");
+  if (optionalArg === "") return null;
+
+  return GetCsName(optionalArg, name, requireBackslash);
 }
 
 /**
