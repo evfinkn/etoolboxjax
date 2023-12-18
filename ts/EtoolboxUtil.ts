@@ -104,7 +104,7 @@ export function getCounter(parser: TexParser, name: string): Counter {
   );
 }
 
-// The following 2 methods are copied from
+// The following 3 methods are copied from
 // node_modules/mathjax-full/js/input/tex/newcommand/NewcommandUtil.ts
 
 /**
