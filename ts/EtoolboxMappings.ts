@@ -6,9 +6,10 @@ import { ETOOLBOX_COMMAND_MAP } from "./EtoolboxUtil.js";
 export const EtoolboxCommandMap = new CommandMap(
   ETOOLBOX_COMMAND_MAP,
   {
-    if: "If",
-    else: "Else",
-    fi: "Fi",
+    newcounter: "NewCounter",
+    setcounter: "SetCounter",
+    stepcounter: "StepCounter",
+    addtocounter: "AddToCounter",
   },
   EtoolboxMethods,
 );
