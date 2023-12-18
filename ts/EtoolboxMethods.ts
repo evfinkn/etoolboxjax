@@ -18,10 +18,10 @@ EtoolboxMethods.NewCounter = function (parser: TexParser, name: string) {
   // optional arguments come before required arguments).
   if (cs === "[") {
     parser.i--; // Decrement so that GetBrackets() gets the argument correctly.
-    const optionalArg = parser.GetBrackets(name);
+    const optionalArg = EtoolboxUtil.GetCsNameBrackets(parser, name);
     // It's fine if GetArgument throws an error, since we'd want that regardless
     // of whether the order is correct or not.
-    const requiredArg = parser.GetArgument(name);
+    const requiredArg = EtoolboxUtil.GetCsNameArgument(parser, name);
     throw new TexError(
       "InvalidArgumentOrder",
       'Counter name "{%2}" must come before optional argument "[%1]"',
@@ -30,7 +30,7 @@ EtoolboxMethods.NewCounter = function (parser: TexParser, name: string) {
     );
   }
   console.debug("cs: ", cs);
-  const superCounter = parser.GetBrackets(name);
+  const superCounter = EtoolboxUtil.GetCsNameBrackets(parser, name);
   console.debug("superCounter: ", superCounter);
   console.debug(new Counter(cs, superCounter));
   const theCs = `the${cs}`;
