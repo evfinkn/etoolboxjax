@@ -31,7 +31,7 @@ export class Counter {
     } else {
       throw new TexError(
         "UndefinedCounterReferenced",
-        "Undefined counter '%1'",
+        'Undefined counter "%1"',
         name,
       );
     }
@@ -56,7 +56,7 @@ export class Counter {
       } else {
         throw new TexError(
           "UndefinedCounterReferenced",
-          "Undefined counter '%1'",
+          'Undefined counter "%1"',
           resetBy,
         );
       }
@@ -100,7 +100,7 @@ export function GetCounter(parser: TexParser, name: string): Counter {
 
   throw new TexError(
     "UndefinedCounterReferenced",
-    "Undefined counter '%1'",
+    'Undefined counter "%1"',
     counterName,
   );
 }
@@ -111,7 +111,7 @@ export function GetNumber(parser: TexParser, name: string): number {
   if (Number.isFinite(num)) return num;
 
   // Invalid number argument.
-  throw new TexError("InvalidNumber", "Invalid number '%1'", arg);
+  throw new TexError("InvalidNumber", 'Invalid number "%1"', arg);
 }
 
 // The following 3 methods are copied from
