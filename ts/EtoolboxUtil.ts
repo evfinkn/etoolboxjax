@@ -94,6 +94,7 @@ export class Counter {
  */
 export function GetCounter(parser: TexParser, name: string): Counter {
   const counterName = parser.GetArgument(name);
+  console.debug("counterName: ", counterName);
   const counter = Counter.get(counterName);
   if (counter) return counter;
 
@@ -102,6 +103,15 @@ export function GetCounter(parser: TexParser, name: string): Counter {
     "Undefined counter '%1'",
     counterName,
   );
+}
+
+export function GetNumber(parser: TexParser, name: string): number {
+  const arg = parser.GetArgument(name);
+  const num = parseInt(arg);
+  if (Number.isFinite(num)) return num;
+
+  // Invalid number argument.
+  throw new TexError("InvalidNumber", "Invalid number '%1'", arg);
 }
 
 // The following 3 methods are copied from
