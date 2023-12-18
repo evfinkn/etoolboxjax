@@ -100,7 +100,7 @@ export function GetCounter(parser: TexParser, name: string): Counter {
   throw new TexError(
     "UndefinedCounterReferenced",
     "Undefined counter '%1'",
-    name,
+    counterName,
   );
 }
 
