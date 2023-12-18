@@ -42,9 +42,10 @@ EtoolboxMethods.SetCounter = function (parser: TexParser, name: string) {
   console.debug("SetCounter");
   const counter = EtoolboxUtil.GetCounter(parser, name);
   console.debug("counter: ", counter);
-  const value = parser.GetArgument(name);
-  console.debug("value: ", value);
-  counter.value = parseInt(value);
+  // const value = parser.GetArgument(name);
+  // console.debug("value: ", value);
+  // counter.value = parseInt(value);
+  counter.value = EtoolboxUtil.GetNumber(parser, name);
   console.debug("counter value after setting value: ", counter.value);
 };
 
@@ -60,9 +61,10 @@ EtoolboxMethods.AddToCounter = function (parser: TexParser, name: string) {
   console.debug("AddToCounter");
   const counter = EtoolboxUtil.GetCounter(parser, name);
   console.debug("counter before adding: ", counter);
-  const value = parser.GetArgument(name);
-  console.debug("value to add: ", value);
-  counter.value += parseInt(value);
+  // const value = parser.GetArgument(name);
+  // console.debug("value to add: ", value);
+  // counter.value += parseInt(value);
+  counter.value += EtoolboxUtil.GetNumber(parser, name);
   console.debug("counter value after adding: ", counter.value);
 };
 
