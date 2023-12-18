@@ -7,25 +7,26 @@ import {
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import "./EtoolboxMappings.js";
-import EtoolboxUtil from "./EtoolboxUtil.js";
+import {
+  ETOOLBOX_COMMAND_MAP,
+  ETOOLBOX_COUNTER_MAP,
+  ETOOLBOX_FLAG_MAP,
+  ETOOLBOX_TOGGLE_MAP,
+} from "./EtoolboxUtil.js";
 
 /**
  * Initializes the etoolbox package.
  * @param {Configuration} config The current configuration.
  */
 const init = function (config: ParserConfiguration) {
-  new CommandMap(EtoolboxUtil.ETOOLBOX_COUNTER_MAP, {}, {});
-  new CommandMap(EtoolboxUtil.ETOOLBOX_FLAG_MAP, {}, {});
-  new CommandMap(EtoolboxUtil.ETOOLBOX_TOGGLE_MAP, {}, {});
+  new CommandMap(ETOOLBOX_COUNTER_MAP, {}, {});
+  new CommandMap(ETOOLBOX_FLAG_MAP, {}, {});
+  new CommandMap(ETOOLBOX_TOGGLE_MAP, {}, {});
 
   config.append(
     Configuration.local({
       handler: {
-        macro: [
-          EtoolboxUtil.ETOOLBOX_COUNTER_MAP,
-          EtoolboxUtil.ETOOLBOX_FLAG_MAP,
-          EtoolboxUtil.ETOOLBOX_TOGGLE_MAP,
-        ],
+        macro: [ETOOLBOX_COUNTER_MAP, ETOOLBOX_FLAG_MAP, ETOOLBOX_TOGGLE_MAP],
       },
       priority: -1,
     }),
@@ -34,7 +35,7 @@ const init = function (config: ParserConfiguration) {
 
 export const EtoolboxConfiguration = Configuration.create("etoolbox", {
   handler: {
-    macro: [EtoolboxUtil.ETOOLBOX_COMMAND_MAP],
+    macro: [ETOOLBOX_COMMAND_MAP],
   },
   options: { maxMacros: 1000 },
   init,

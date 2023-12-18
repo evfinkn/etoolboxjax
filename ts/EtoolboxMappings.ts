@@ -1,10 +1,10 @@
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import EtoolboxMethods from "./EtoolboxMethods.js";
-import EtoolboxUtil from "./EtoolboxUtil.js";
+import { ETOOLBOX_COMMAND_MAP } from "./EtoolboxUtil.js";
 
 export const EtoolboxCommandMap = new CommandMap(
-  EtoolboxUtil.ETOOLBOX_COMMAND_MAP,
+  ETOOLBOX_COMMAND_MAP,
   {
     if: "If",
     else: "Else",
