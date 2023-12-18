@@ -92,7 +92,7 @@ export class Counter {
  * @returns {Counter} The counter with the given name.
  * @throws {TexError} If the counter does not exist.
  */
-export function getCounter(parser: TexParser, name: string): Counter {
+export function GetCounter(parser: TexParser, name: string): Counter {
   const counterName = parser.GetArgument(name);
   const counter = Counter.get(counterName);
   if (counter) return counter;

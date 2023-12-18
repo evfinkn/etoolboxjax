@@ -20,7 +20,7 @@ EtoolboxMethods.NewCounter = function (parser: TexParser, name: string) {
 
 EtoolboxMethods.SetCounter = function (parser: TexParser, name: string) {
   console.debug("SetCounter");
-  const counter = EtoolboxUtil.getCounter(parser, name);
+  const counter = EtoolboxUtil.GetCounter(parser, name);
   console.debug("counter: ", counter);
   const value = parser.GetArgument(name);
   console.debug("value: ", value);
@@ -30,7 +30,7 @@ EtoolboxMethods.SetCounter = function (parser: TexParser, name: string) {
 
 EtoolboxMethods.StepCounter = function (parser: TexParser, name: string) {
   console.debug("StepCounter");
-  const counter = EtoolboxUtil.getCounter(parser, name);
+  const counter = EtoolboxUtil.GetCounter(parser, name);
   console.debug("counter before stepping: ", counter);
   counter.value++;
   console.debug("counter value after stepping: ", counter.value);
@@ -38,7 +38,7 @@ EtoolboxMethods.StepCounter = function (parser: TexParser, name: string) {
 
 EtoolboxMethods.AddToCounter = function (parser: TexParser, name: string) {
   console.debug("AddToCounter");
-  const counter = EtoolboxUtil.getCounter(parser, name);
+  const counter = EtoolboxUtil.GetCounter(parser, name);
   console.debug("counter before adding: ", counter);
   const value = parser.GetArgument(name);
   console.debug("value to add: ", value);
