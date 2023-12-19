@@ -41,8 +41,15 @@ export const ETOOLBOX_TOGGLE_MAP = "etoolbox-toggles";
 export class Counter {
   private static counters: Record<string, Counter> = {};
 
-  public static get(name: string): Counter | null {
-    return Counter.counters[name];
+  public static get(name: string, required: boolean = true): Counter | null {
+    const counter = Counter.counters[name];
+    if (counter) return counter;
+
+    throw new TexError(
+      "UndefinedCounterReferenced",
+      'Undefined counter "%1"',
+      name,
+    );
   }
 
   /**
@@ -54,15 +61,7 @@ export class Counter {
   public static the(parser: TexParser, name: string) {
     name = name.substring(4); // Remove '\the' from the name.
     const counter = Counter.get(name);
-    if (counter) {
-      pushNumber(parser, counter.value);
-    } else {
-      throw new TexError(
-        "UndefinedCounterReferenced",
-        'Undefined counter "%1"',
-        name,
-      );
-    }
+    parser.PushAll(ParseUtil.internalMath(parser, counter.value.toString()));
   }
 
   /** The counters that are reset when this counter's value is changed. */
@@ -78,16 +77,8 @@ export class Counter {
   ) {
     if (resetBy) {
       const counter = Counter.get(resetBy);
-      if (counter) {
-        counter.subCounters.push(this);
-        this.superCounter = counter;
-      } else {
-        throw new TexError(
-          "UndefinedCounterReferenced",
-          'Undefined counter "%1"',
-          resetBy,
-        );
-      }
+      counter.subCounters.push(this);
+      this.superCounter = counter;
     }
     Counter.counters[_name] = this;
   }
@@ -123,14 +114,7 @@ export class Counter {
 export function GetCounter(parser: TexParser, name: string): Counter {
   const counterName = parser.GetArgument(name);
   console.debug("counterName: ", counterName);
-  const counter = Counter.get(counterName);
-  if (counter) return counter;
-
-  throw new TexError(
-    "UndefinedCounterReferenced",
-    'Undefined counter "%1"',
-    counterName,
-  );
+  return Counter.get(counterName);
 }
 
 export function GetNumber(parser: TexParser, name: string): number {
@@ -223,10 +207,6 @@ export function addMacro(
   const handlers = parser.configuration.handlers;
   const handler = handlers.retrieve(handlerName) as CommandMap;
   handler.add(cs, new Macro(cs, func, attr));
-}
-
-export function pushNumber(parser: TexParser, n: number) {
-  parser.PushAll(ParseUtil.internalMath(parser, n.toString()));
 }
 
 export type FormatMethod = "toArabic" | "toRoman" | "toAlph" | "toFnSymbol";
