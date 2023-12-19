@@ -73,12 +73,12 @@ EtoolboxMethods.AddToCounter = function (parser: TexParser, name: string) {
  * Handles the formatting-related commands.
  *
  * Specifically, this handles the following commands:
- * - \arabic
- * - \roman
- * - \Roman
- * - \alph
- * - \Alph
- * - \fnsymbol
+ * - `\arabic`
+ * - `\roman`
+ * - `\Roman`
+ * - `\alph`
+ * - `\Alph`
+ * - `\fnsymbol`
  *
  * @param {TexParser} parser The calling parser.
  * @param {string} name The name of the calling command.
