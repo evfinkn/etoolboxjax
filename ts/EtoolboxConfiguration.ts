@@ -37,6 +37,5 @@ export const EtoolboxConfiguration = Configuration.create("etoolbox", {
   handler: {
     macro: [ETOOLBOX_COMMAND_MAP],
   },
-  options: { maxMacros: 1000 },
   init,
 });
