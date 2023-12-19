@@ -118,7 +118,10 @@ export class Counter {
     this.value++;
     // In LaTeX, only the `\stepcounter` command resets subcounters.
     this.subCounters.forEach((counter) => {
-      counter.value = 0;
+      // Instead of resetting the counter, we set it to -1 and then call `step()`
+      // so that the counter's subcounters are also reset.
+      counter.value = -1;
+      counter.step();
     });
   }
 
