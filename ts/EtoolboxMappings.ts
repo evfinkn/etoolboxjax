@@ -16,6 +16,8 @@ export const EtoolboxCommandMap = new CommandMap(
     alph: ["Format", "toAlph", false],
     Alph: ["Format", "toAlph", true],
     fnsymbol: ["Format", "toFnSymbol"],
+    counterwithin: "CounterWithin",
+    counterwithout: "CounterWithout",
   },
   EtoolboxMethods,
 );

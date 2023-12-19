@@ -38,6 +38,10 @@ export const ETOOLBOX_COUNTER_MAP = "etoolbox-counters";
 export const ETOOLBOX_FLAG_MAP = "etoolbox-flags";
 export const ETOOLBOX_TOGGLE_MAP = "etoolbox-toggles";
 
+function defaultCounterToString(): string {
+  return this.value.toString();
+}
+
 export class Counter {
   private static counters: Record<string, Counter> = {};
 
@@ -61,26 +65,39 @@ export class Counter {
   public static the(parser: TexParser, name: string) {
     name = name.substring(4); // Remove '\the' from the name.
     const counter = Counter.get(name);
-    parser.PushAll(ParseUtil.internalMath(parser, counter.value.toString()));
+    parser.PushAll(ParseUtil.internalMath(parser, counter.toString()));
   }
 
   /** The counters that are reset when this counter's value is changed. */
   private subCounters: Counter[] = [];
 
   /** The counter that resets this counter's value, if any. */
-  private superCounter: Counter | null = null;
+  private _superCounter: Counter | null = null;
+
+  private _toString: () => string = defaultCounterToString;
 
   public constructor(
     private _name: string,
     resetBy: string | null = null,
     private _value: number = 0,
   ) {
+    if (Counter.counters[_name]) {
+      throw new TexError(
+        "DuplicateCounter",
+        'Counter "%1" already defined',
+        _name,
+      );
+    }
     if (resetBy) {
       const counter = Counter.get(resetBy);
       counter.subCounters.push(this);
-      this.superCounter = counter;
+      this._superCounter = counter;
     }
     Counter.counters[_name] = this;
+  }
+
+  public toString(): string {
+    return this._toString();
   }
 
   /** The name of the counter. */
@@ -102,6 +119,33 @@ export class Counter {
 
   public add(n: number): void {
     this.value += n;
+  }
+
+  public get superCounter(): Counter | null {
+    return this._superCounter;
+  }
+
+  public set superCounter(counter: Counter | null) {
+    if (this._superCounter) {
+      const index = this._superCounter.subCounters.indexOf(this);
+      if (index > -1) this._superCounter.subCounters.splice(index, 1);
+    }
+    this._superCounter = counter;
+    counter?.subCounters?.push?.(this);
+  }
+
+  public within(counter: Counter, updateToString: boolean) {
+    this.superCounter = counter;
+    if (updateToString) {
+      this._toString = () => `${counter.toString()}.${this.value}`;
+    }
+  }
+
+  public without(counter: Counter) {
+    if (this.superCounter === counter) {
+      this.superCounter = null;
+      this._toString = defaultCounterToString;
+    }
   }
 }
 

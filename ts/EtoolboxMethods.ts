@@ -70,6 +70,55 @@ EtoolboxMethods.AddToCounter = function (parser: TexParser, name: string) {
 };
 
 /**
+ * Handles the `\counterwithin{counter}{superCounter}` command.
+ *
+ * This adds `counter` to `superCounter`'s list of subcounters, meaning that
+ * `counter` will be reset when `superCounter` is changed. The `\thecounter` command
+ * will also be updated to include `\thesuperCounter.` as a prefix, unless the starred
+ * version of `\counterwithin` (i.e. `\counterwithin*`) is used.
+ *
+ * Note that `\counterwithin*` doesn't change the prefix of `\thecounter` if
+ * `superCounter` was already set with `\counterwithin`. If you want to remove the
+ * use `\counterwithout` followed by `\counterwithin*`.
+ *
+ * If `counter` already has a supercounter, it will be removed from that supercounter's
+ * list of subcounters.
+ * @param {TexParser} parser The calling parser.
+ * @param {string} name The name of the calling command.
+ */
+EtoolboxMethods.CounterWithin = function (parser: TexParser, name: string) {
+  console.debug(name);
+  const updateToString = !parser.GetStar();
+  console.debug("updateToString: ", updateToString);
+  const counter = EtoolboxUtil.GetCounter(parser, name);
+  console.debug("counter: ", counter);
+  const superCounter = EtoolboxUtil.GetCounter(parser, name);
+  console.debug("superCounter: ", superCounter);
+  counter.within(superCounter, updateToString);
+};
+
+/**
+ * Handles the `\counterwithout{counter}{superCounter}` command.
+ *
+ * This removes `counter` from `superCounter`'s list of subcounters, meaning that
+ * `counter` will no longer be reset when `superCounter` is changed. Additionally, if
+ * `superCounter` was set with the unstarred version of `\counterwithin`, `\thecounter`
+ * will no longer be prefixed with `\thesuperCounter.`.
+ *
+ * If `superCounter` is not `counter`'s supercounter, this command does nothing.
+ * @param {TexParser} parser The calling parser.
+ * @param {string} name The name of the calling command.
+ */
+EtoolboxMethods.CounterWithout = function (parser: TexParser, name: string) {
+  console.debug(name);
+  const counter = EtoolboxUtil.GetCounter(parser, name);
+  console.debug("counter: ", counter);
+  const superCounter = EtoolboxUtil.GetCounter(parser, name);
+  console.debug("superCounter: ", superCounter);
+  counter.without(superCounter);
+};
+
+/**
  * Handles the formatting-related commands.
  *
  * Specifically, this handles the following commands:
