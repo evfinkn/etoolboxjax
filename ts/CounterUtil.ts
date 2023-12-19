@@ -33,10 +33,8 @@ const FN_SYMBOLS = [
   "\\ddagger\\ddagger",
 ];
 
-export const ETOOLBOX_COMMAND_MAP = "etoolbox-commands";
-export const ETOOLBOX_COUNTER_MAP = "etoolbox-counters";
-export const ETOOLBOX_FLAG_MAP = "etoolbox-flags";
-export const ETOOLBOX_TOGGLE_MAP = "etoolbox-toggles";
+export const COMMAND_MAP = "counter-commands";
+export const COUNTER_MAP = "counter-counters";
 
 function defaultCounterToString(): string {
   return this.value.toString();

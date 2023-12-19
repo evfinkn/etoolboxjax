@@ -1,10 +1,10 @@
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
-import EtoolboxMethods from "./EtoolboxMethods.js";
-import { ETOOLBOX_COMMAND_MAP } from "./EtoolboxUtil.js";
+import CounterMethods from "./CounterMethods.js";
+import { COMMAND_MAP } from "./CounterUtil.js";
 
-export const EtoolboxCommandMap = new CommandMap(
-  ETOOLBOX_COMMAND_MAP,
+export const CounterCommandMap = new CommandMap(
+  COMMAND_MAP,
   {
     newcounter: "NewCounter",
     setcounter: "SetCounter",
@@ -19,5 +19,5 @@ export const EtoolboxCommandMap = new CommandMap(
     counterwithin: "CounterWithin",
     counterwithout: "CounterWithout",
   },
-  EtoolboxMethods,
+  CounterMethods,
 );

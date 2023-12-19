@@ -1,18 +1,18 @@
 {
   "build": {
-    "id": "[etoolbox]/etoolboxjax",
-    "component": "input/tex/extension/etoolbox",
+    "id": "[counter]/counterjax",
+    "component": "input/tex/extension/counter",
     "js": "../js",
     "ts": "../ts",
     "targets": [
-      "EtoolboxConfiguration.ts",
-      "EtoolboxMappings.ts",
-      "EtoolboxMethods.ts",
-      "EtoolboxUtil.ts"
+      "CounterConfiguration.ts",
+      "CounterMappings.ts",
+      "CounterMethods.ts",
+      "CounterUtil.ts"
     ]
   },
   "webpack": {
-    "name": "etoolbox",
+    "name": "counter",
     "js": "../js",
     "libs": ["components/src/core/lib", "components/src/input/tex-base/lib"],
     "dist": "../browser/"

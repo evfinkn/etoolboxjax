@@ -1,5 +1,5 @@
 {
-  "name": "etoolboxjax",
+  "name": "counterjax",
   "type": "module",
   "scripts": {
     "prepare": "husky install",
