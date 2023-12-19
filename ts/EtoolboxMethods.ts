@@ -54,7 +54,7 @@ EtoolboxMethods.StepCounter = function (parser: TexParser, name: string) {
   console.debug(name);
   const counter = EtoolboxUtil.GetCounter(parser, name);
   console.debug("counter before stepping: ", counter);
-  counter.value++;
+  counter.step();
   console.debug("counter value after stepping: ", counter.value);
 };
 

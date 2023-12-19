@@ -112,6 +112,11 @@ export class Counter {
 
   public set value(value: number) {
     this._value = value;
+  }
+
+  public step() {
+    this.value++;
+    // In LaTeX, only the `\stepcounter` command resets subcounters.
     this.subCounters.forEach((counter) => {
       counter.value = 0;
     });
