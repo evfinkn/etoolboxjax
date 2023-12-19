@@ -5,6 +5,34 @@ import { Macro } from "mathjax-full/js/input/tex/Token.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 import { Args, ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
+const ROMAN_NUMERALS: [string, number][] = [
+  ["M", 1000],
+  ["CM", 900],
+  ["D", 500],
+  ["CD", 400],
+  ["C", 100],
+  ["XC", 90],
+  ["L", 50],
+  ["XL", 40],
+  ["X", 10],
+  ["IX", 9],
+  ["V", 5],
+  ["IV", 4],
+  ["I", 1],
+];
+
+const FN_SYMBOLS = [
+  "*",
+  "\\dagger",
+  "\\ddagger",
+  "\u00A7", // "\\textsection",
+  "\u00B6", // "\\textparagraph",
+  "\\|",
+  "**",
+  "\\dagger\\dagger",
+  "\\ddagger\\ddagger",
+];
+
 export const ETOOLBOX_COMMAND_MAP = "etoolbox-commands";
 export const ETOOLBOX_COUNTER_MAP = "etoolbox-counters";
 export const ETOOLBOX_FLAG_MAP = "etoolbox-flags";
@@ -199,4 +227,36 @@ export function addMacro(
 
 export function pushNumber(parser: TexParser, n: number) {
   parser.PushAll(ParseUtil.internalMath(parser, n.toString()));
+}
+
+export type FormatMethod = "toArabic" | "toRoman" | "toAlph" | "toFnSymbol";
+
+export function toArabic(num: number): string {
+  return num.toString();
+}
+
+export function toRoman(num: number): string {
+  if (num <= 0) return "";
+
+  let result = "";
+
+  ROMAN_NUMERALS.forEach(([symbol, value]) => {
+    const count = Math.floor(num / value);
+    result += symbol.repeat(count);
+    num -= value * count;
+  });
+
+  return result;
+}
+
+export function toAlph(num: number): string {
+  if (num <= 0 || num > 26) return "";
+
+  return String.fromCharCode(0x40 + num);
+}
+
+export function toFnSymbol(num: number): string {
+  if (num <= 0 || num > FN_SYMBOLS.length) return "";
+
+  return FN_SYMBOLS[num - 1];
 }
