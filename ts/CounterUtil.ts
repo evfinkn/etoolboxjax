@@ -1,9 +1,12 @@
+import { MathJax } from "mathjax-full/js/components/global.js";
 import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 import TexParser from "mathjax-full/js/input/tex/TexParser.js";
 import { Macro } from "mathjax-full/js/input/tex/Token.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 import { Args, ParseMethod } from "mathjax-full/js/input/tex/Types.js";
+
+const MJCONFIG = MathJax.config;
 
 const ROMAN_NUMERALS: [string, number][] = [
   ["M", 1000],
@@ -154,6 +157,25 @@ export class Counter {
     }
   }
 }
+
+Object.entries(MJCONFIG.counters || {}).forEach(([name, value]) => {
+  if (typeof value === "number") {
+    new Counter(name, null, value);
+  }
+});
+
+MJCONFIG.counters = new Proxy(
+  {},
+  {
+    get: (target: Record<string, [string, number]>, name: string) => {
+      const counter = Counter.get(name, false);
+      return counter ? [counter.toString(), counter.value] : target[name];
+    },
+
+    // Don't allow setting the value of a counter.
+    set: (_target, _name: string, _value: number) => false,
+  },
+);
 
 /**
  * @param {TexParser} parser The calling parser.
