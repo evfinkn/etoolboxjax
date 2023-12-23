@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Counters Demo</title>
+    <script>
+      MathJax = {
+        loader: {
+          load: ["[tex]/tagformat", "[counter]/counter.js"],
+          paths: { counter: "./browser" },
+        },
+        tex: {
+          tags: "ams",
+          tagformat: {
+            number: (n) => {
+              const subsectionString = MathJax.config.counters.subsection[0];
+              return `${subsectionString}.${n}`;
+            },
+          },
+          packages: {
+            "[+]": ["counter", "tagformat"],
+          },
+          macros: {
+            intersects: "\\ni\\mathrel{\\mkern-3mu}\\in",
+          },
+        },
+      };
+    </script>
+    <script
+      type="text/javascript"
+      async
+      src="./node_modules/mathjax-full/bundle/tex-mml-chtml.js"
+    ></script>
+    <style>
+      .hidden {
+        display: none;
+      }
+
+      .fn-ref {
+        font-size: 0.8em;
+        vertical-align: super;
+      }
+
+      .fn-backref {
+        font-size: 0.8em;
+        vertical-align: baseline;
+      }
+
+      .footnotes {
+        border-top: 1px solid #bbbbbb;
+        margin-top: 25px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Set Operations</h1>
+    <span class="hidden">
+      \[ \newcounter{section} \newcounter{subsection}
+      \counterwithin{subsection}{section} \]
+    </span>
+    <span class="hidden">\[\stepcounter{section}\]</span>
+    <h2>\(\thesection\) Union</h2>
+    <p>
+      The <i>union</i> (denoted by \(\cup\)) of a collection of sets is the set
+      of all elements in the collection.
+    </p>
+    <p>
+      The union of two sets \(A\) and \(B\) is \[ \begin{equation} A \cup B = \{
+      x \mid x \in A \text{ or } x \in B \} \,. \end{equation} \]
+    </p>
+  </body>
+  <span class="hidden">\[\stepcounter{subsection}\]</span>
+  <h3>\(\thesubsection\) Notation</h3>
+  <p>
+    For a union of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can use the
+    notation \[ \bigcup_{i=1}^{n} S_{i} \] instead of \(S_{1} \cup S_{2} \cup
+    S_{3} \cup \dots \cup S_{n}\).
+  </p>
+  <span class="hidden">\[\stepcounter{subsection}\]</span>
+  <h3>\(\thesubsection\) Properties</h3>
+  <p>
+    The union of sets is commutative, associative, and idempotent. That is, for
+    any sets \(A\), \(B\), and \(C\), \[ \begin{align} A \cup B &= B \cup A \\ A
+    \cup (B \cup C) &= (A \cup B) \cup C \\ A \cup A &= A \end{align} \]
+  </p>
+  <span class="hidden">\[\stepcounter{section}\]</span>
+  <h2>\(\thesection\) Intersection</h2>
+  <p>
+    The <i>intersection</i> (denoted by \(\cap\)) of a collection of sets is the
+    set containing every element \(x\) where \(x\) belongs to every set in the
+    collection.
+  </p>
+  <p>
+    The intersection of two sets \(A\) and \(B\) is \[ \begin{equation} A \cap B
+    = \{ x \mid x \in A \text{ and } x \in B \} \,. \end{equation} \]
+  </p>
+  <span class="hidden">\[\stepcounter{subsection}\]</span>
+  <h3>\(\thesubsection\) Notation</h3>
+  <p>
+    For an intersection of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can
+    use the notation \[ \bigcap_{i=1}^{n} S_{i} \] instead of \(S_{1} \cap S_{2}
+    \cap S_{3} \cap \dots \cap S_{n}\).
+  </p>
+  <p>
+    If \(A\) and \(B\) are sets, we say that \(A\) <i>intersects</i> \(B\)
+    (denoted \(A \intersects B\)<a href="#fn1" id="ref1" class="fn-ref">[1]</a>)
+    if there exists some element \(x\) such that \(x \in A \cap B\). This
+    relation is sometimes denoted as \(A \cap B \neq \varnothing\).
+  </p>
+  <span class="hidden">\[\stepcounter{subsection}\]</span>
+  <h3>\(\thesubsection\) Properties</h3>
+  <p>
+    The intersection of sets is commutative, associative, and idempotent. That
+    is, for any sets \(A\), \(B\), and \(C\): \[ \begin{align} A \cap B &= B
+    \cap A \\ A \cap (B \cap C) &= (A \cap B) \cap C \\ A \cap A &= A
+    \end{align} \]
+  </p>
+  <footer class="footnotes">
+    <ol>
+      <li id="fn1">
+        This notation comes from
+        <a
+          href="https://williamhoza.com/blog/notation-for-nonempty-intersection/"
+          >William Hoza's blog</a
+        >.
+        <a href="#ref1" class="fn-backref">↩</a>
+      </li>
+    </ol>
+  </footer>
+</html>
