@@ -17,7 +17,7 @@ const init = function (config: ParserConfiguration) {
   config.append(
     Configuration.local({
       handler: { macro: [COUNTER_MAP] },
-      priority: -1,
+      priority: -3,
     }),
   );
 };
