@@ -180,7 +180,6 @@ export function GetNumber(parser: TexParser, name: string): number {
   const num = parseInt(arg);
   if (Number.isFinite(num)) return num;
 
-  // Invalid number argument.
   throw new TexError("InvalidNumber", 'Invalid number "%1"', arg);
 }
 
