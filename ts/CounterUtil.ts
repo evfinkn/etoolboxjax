@@ -42,7 +42,13 @@ export class Counter {
   public static the(parser: TexParser, name: string) {
     name = name.substring(4); // Remove '\the' from the name.
     const counter = Counter.get(name);
-    parser.PushAll(ParseUtil.internalMath(parser, counter.toString()));
+    parser.Push(
+      new TexParser(
+        counter.toString(),
+        parser.stack.env,
+        parser.configuration,
+      ).mml(),
+    );
   }
 
   /** The counters that are reset when this counter's value is changed. */
