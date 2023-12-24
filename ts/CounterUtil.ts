@@ -23,10 +23,6 @@ const FN_SYMBOLS = [
 export const COMMAND_MAP = "counter-commands";
 export const COUNTER_MAP = "counter-counters";
 
-function defaultCounterToString(): string {
-  return this.value.toString();
-}
-
 export class Counter {
   private static counters: Record<string, Counter> = {};
 
@@ -59,7 +55,7 @@ export class Counter {
   /** The counter that resets this counter's value, if any. */
   private _superCounter: Counter | null = null;
 
-  private _toString: () => string = defaultCounterToString;
+  private _toString: () => string | null;
 
   /**
    * @param {string} name - The name of the counter.
@@ -90,7 +86,7 @@ export class Counter {
   }
 
   public toString(): string {
-    return this._toString();
+    return this._toString?.() ?? this.value.toString();
   }
 
   /** The current value of the counter. */
@@ -140,7 +136,7 @@ export class Counter {
   public without(counter: Counter) {
     if (this.superCounter === counter) {
       this.superCounter = null;
-      this._toString = defaultCounterToString;
+      this._toString = null;
     }
   }
 }
