@@ -62,13 +62,13 @@ export class Counter {
    * @param {?string} [resetBy=null] - The name of another counter that, when
    *   incremented, will reset this counter. If null, the counter will not be reset by
    *   any other counter.
-   * @param {number} [_value=0] - The initial value of the counter.
+   * @param {number} [value=0] - The value of the counter.
    * @throws {TexError} If a counter with the same name already exists.
    */
   public constructor(
     public readonly name: string,
     resetBy: string | null = null,
-    private _value: number = 0,
+    public value: number = 0,
   ) {
     if (Counter.counters[name]) {
       throw new TexError(
@@ -87,15 +87,6 @@ export class Counter {
 
   public toString(): string {
     return this._toString?.() ?? this.value.toString();
-  }
-
-  /** The current value of the counter. */
-  public get value(): number {
-    return this._value;
-  }
-
-  public set value(value: number) {
-    this._value = value;
   }
 
   public step() {
