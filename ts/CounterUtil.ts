@@ -8,22 +8,6 @@ import { Args, ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 const MJCONFIG = MathJax.config;
 
-const ROMAN_NUMERALS: [string, number][] = [
-  ["M", 1000],
-  ["CM", 900],
-  ["D", 500],
-  ["CD", 400],
-  ["C", 100],
-  ["XC", 90],
-  ["L", 50],
-  ["XL", 40],
-  ["X", 10],
-  ["IX", 9],
-  ["V", 5],
-  ["IV", 4],
-  ["I", 1],
-];
-
 const FN_SYMBOLS = [
   "*",
   "\\dagger",
@@ -287,16 +271,25 @@ export function toArabic(num: number): string {
   return num.toString();
 }
 
+// prettier-ignore
 export function toRoman(num: number): string {
   if (num <= 0) return "";
 
   let result = "";
 
-  ROMAN_NUMERALS.forEach(([symbol, value]) => {
-    const count = Math.floor(num / value);
-    result += symbol.repeat(count);
-    num -= value * count;
-  });
+  while (num >= 1000) { result += "M"; num -= 1000; }
+  if (num >= 900) { result += "CM"; num -= 900; }
+  if (num >= 500) { result += "D"; num -= 500; }
+  if (num >= 400) { result += "CD"; num -= 400; }
+  while (num >= 100) { result += "C"; num -= 100; }
+  if (num >= 90) { result += "XC"; num -= 90; }
+  if (num >= 50) { result += "L"; num -= 50; }
+  if (num >= 40) { result += "XL"; num -= 40; }
+  while (num >= 10) { result += "X"; num -= 10; }
+  if (num >= 9) { result += "IX"; num -= 9; }
+  if (num >= 5) { result += "V"; num -= 5; }
+  if (num >= 4) { result += "IV"; num -= 4; }
+  while (num >= 1) { result += "I"; num -= 1; }
 
   return result;
 }
