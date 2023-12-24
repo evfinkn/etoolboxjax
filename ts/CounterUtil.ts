@@ -278,7 +278,5 @@ export function toAlph(num: number): string {
 }
 
 export function toFnSymbol(num: number): string {
-  if (num <= 0 || num > FN_SYMBOLS.length) return "";
-
-  return FN_SYMBOLS[num - 1];
+  return FN_SYMBOLS[num - 1] ?? "";
 }
