@@ -30,11 +30,7 @@ export class Counter {
     const counter = Counter.counters[name];
     if (counter) return counter;
 
-    throw new TexError(
-      "UndefinedCounterReferenced",
-      'Undefined counter "%1"',
-      name,
-    );
+    throw new TexError("UndefinedCounter", `Undefined counter "${name}"`);
   }
 
   /**
@@ -73,8 +69,7 @@ export class Counter {
     if (Counter.counters[name]) {
       throw new TexError(
         "DuplicateCounter",
-        'Counter "%1" already defined',
-        name,
+        `Counter "${name}" already defined`,
       );
     }
     if (resetBy) {
@@ -163,7 +158,7 @@ export function GetNumber(parser: TexParser, name: string): number {
   const num = parseInt(arg);
   if (Number.isFinite(num)) return num;
 
-  throw new TexError("InvalidNumber", 'Invalid number "%1"', arg);
+  throw new TexError("InvalidNumber", `Invalid number "${arg}"`);
 }
 
 // The following 2 methods are copied from
@@ -188,15 +183,13 @@ export function GetCsName(
   } else if (requireBackslash) {
     throw new TexError(
       "MissingControlSequence",
-      "%1 must be given a control sequence",
-      name,
+      `${name} must be given a control sequence`,
     );
   }
   if (!cs.match(/^(.|[a-z]+)$/i)) {
     throw new TexError(
-      "IllegalControlSequenceName",
-      "Illegal control sequence name for %1",
-      name,
+      "IllegalControlSequence",
+      `Illegal control sequence "${cs}" given for ${name}`,
     );
   }
   return cs;
