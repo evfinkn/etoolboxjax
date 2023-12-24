@@ -9,7 +9,6 @@ import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
 const CounterMethods: Record<string, ParseMethod> = {};
 
 CounterMethods.NewCounter = function (parser: TexParser, name: string) {
-  console.debug(name);
   const cs = Util.GetCsNameArgument(parser, name);
   // The order has to be \newcounter{cs}[superCounter] like in LaTeX. If `cs` is a "["
   // then the order is reversed, so we throw an error.
@@ -30,43 +29,25 @@ CounterMethods.NewCounter = function (parser: TexParser, name: string) {
       requiredArg,
     );
   }
-  console.debug("cs: ", cs);
   const superCounter = Util.GetCsNameBrackets(parser, name);
-  console.debug("superCounter: ", superCounter);
-  console.debug(new Counter(cs, superCounter));
+  new Counter(cs, superCounter);
   const theCs = `the${cs}`;
-  console.debug("theCs: ", theCs);
   Util.addMacro(parser, COUNTER_MAP, theCs, Counter.the);
 };
 
 CounterMethods.SetCounter = function (parser: TexParser, name: string) {
-  console.debug(name);
   const counter = Util.GetCounter(parser, name);
-  console.debug("counter: ", counter);
-  // const value = parser.GetArgument(name);
-  // console.debug("value: ", value);
-  // counter.value = parseInt(value);
   counter.value = Util.GetNumber(parser, name);
-  console.debug("counter value after setting value: ", counter.value);
 };
 
 CounterMethods.StepCounter = function (parser: TexParser, name: string) {
-  console.debug(name);
   const counter = Util.GetCounter(parser, name);
-  console.debug("counter before stepping: ", counter);
   counter.step();
-  console.debug("counter value after stepping: ", counter.value);
 };
 
 CounterMethods.AddToCounter = function (parser: TexParser, name: string) {
-  console.debug(name);
   const counter = Util.GetCounter(parser, name);
-  console.debug("counter before adding: ", counter);
-  // const value = parser.GetArgument(name);
-  // console.debug("value to add: ", value);
-  // counter.value += parseInt(value);
   counter.value += Util.GetNumber(parser, name);
-  console.debug("counter value after adding: ", counter.value);
 };
 
 /**
@@ -87,13 +68,9 @@ CounterMethods.AddToCounter = function (parser: TexParser, name: string) {
  * @param {string} name The name of the calling command.
  */
 CounterMethods.CounterWithin = function (parser: TexParser, name: string) {
-  console.debug(name);
   const updateToString = !parser.GetStar();
-  console.debug("updateToString: ", updateToString);
   const counter = Util.GetCounter(parser, name);
-  console.debug("counter: ", counter);
   const superCounter = Util.GetCounter(parser, name);
-  console.debug("superCounter: ", superCounter);
   counter.within(superCounter, updateToString);
 };
 
@@ -110,11 +87,8 @@ CounterMethods.CounterWithin = function (parser: TexParser, name: string) {
  * @param {string} name The name of the calling command.
  */
 CounterMethods.CounterWithout = function (parser: TexParser, name: string) {
-  console.debug(name);
   const counter = Util.GetCounter(parser, name);
-  console.debug("counter: ", counter);
   const superCounter = Util.GetCounter(parser, name);
-  console.debug("superCounter: ", superCounter);
   counter.without(superCounter);
 };
 
@@ -141,11 +115,9 @@ CounterMethods.Format = function (
   formatMethod: Util.FormatMethod,
   capital: boolean | null = null,
 ) {
-  console.debug(name);
   const counter = Util.GetCounter(parser, name);
   let formatted = Util[formatMethod](counter.value);
   formatted = capital ? formatted.toUpperCase() : formatted.toLowerCase();
-  console.debug("formatted: ", formatted);
   if (/^[a-zA-Z]*$/.test(formatted)) {
     const mathvariant = parser.stack.env.font || parser.stack.env.mathvariant;
     const def = mathvariant ? { mathvariant } : {};
