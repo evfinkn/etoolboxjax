@@ -155,6 +155,9 @@ export function GetCounter(parser: TexParser, name: string): Counter {
 
 export function GetNumber(parser: TexParser, name: string): number {
   const arg = parser.GetArgument(name);
+  const counterName = /\\value\{([a-zA-Z]+)\}/.exec(arg)?.[1];
+  if (counterName) return Counter.get(counterName).value;
+
   const num = parseInt(arg);
   if (Number.isFinite(num)) return num;
 
