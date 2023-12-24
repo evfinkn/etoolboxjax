@@ -189,7 +189,7 @@ export function GetCsName(
   if (!cs.match(/^(.|[a-z]+)$/i)) {
     throw new TexError(
       "IllegalControlSequence",
-      `Illegal control sequence "${cs}" given for ${name}`,
+      `Illegal control sequence name "${cs}" given for ${name}`,
     );
   }
   return cs;

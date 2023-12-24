@@ -13,16 +13,9 @@ CounterMethods.NewCounter = function (parser: TexParser, name: string) {
   // The order has to be \newcounter{cs}[superCounter] like in LaTeX. If `cs` is a "["
   // then the order is reversed, so we throw an error.
   if (cs === "[") {
-    parser.i--; // Decrement so that GetBrackets() gets the argument correctly.
-    const optionalArg = Util.GetCsNameBrackets(parser, name);
-    // It's fine if GetCsNameArgument throws an error since we'd want that regardless
-    // of whether the order is correct or not.
-    const requiredArg = Util.GetCsNameArgument(parser, name);
     throw new TexError(
       "InvalidArgumentOrder",
-      'Counter name "{%2}" must come before optional argument "[%1]"',
-      optionalArg,
-      requiredArg,
+      "Counter name must come before optional argument",
     );
   }
   const superCounter = Util.GetCsNameBrackets(parser, name);
