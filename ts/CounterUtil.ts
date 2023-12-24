@@ -249,7 +249,7 @@ export function GetCsNameBrackets(
  * Adds a new macro as extension to the parser.
  * @param {TexParser} parser The current parser.
  * @param {string} handlerName The name of the handler to add the macro to.
- * @param {string} cs The control sequence of the delimiter.
+ * @param {string} cs The control sequence of the macro.
  * @param {ParseMethod} func The parse method for this macro.
  * @param {Args[]} attr The attributes needed for parsing.
  */
