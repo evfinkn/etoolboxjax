@@ -62,15 +62,15 @@ export class Counter {
   private _toString: () => string = defaultCounterToString;
 
   public constructor(
-    private _name: string,
+    public readonly name: string,
     resetBy: string | null = null,
     private _value: number = 0,
   ) {
-    if (Counter.counters[_name]) {
+    if (Counter.counters[name]) {
       throw new TexError(
         "DuplicateCounter",
         'Counter "%1" already defined',
-        _name,
+        name,
       );
     }
     if (resetBy) {
@@ -78,16 +78,11 @@ export class Counter {
       counter.subCounters.push(this);
       this._superCounter = counter;
     }
-    Counter.counters[_name] = this;
+    Counter.counters[name] = this;
   }
 
   public toString(): string {
     return this._toString();
-  }
-
-  /** The name of the counter. */
-  public get name(): string {
-    return this._name;
   }
 
   /** The current value of the counter. */
