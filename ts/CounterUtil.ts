@@ -30,7 +30,7 @@ function defaultCounterToString(): string {
 export class Counter {
   private static counters: Record<string, Counter> = {};
 
-  public static get(name: string, required: boolean = true): Counter | null {
+  public static get(name: string): Counter {
     const counter = Counter.counters[name];
     if (counter) return counter;
 
@@ -146,9 +146,9 @@ Object.entries(MJCONFIG.counters || {}).forEach(([name, value]) => {
 MJCONFIG.counters = new Proxy(
   {},
   {
-    get: (target: Record<string, [string, number]>, name: string) => {
-      const counter = Counter.get(name, false);
-      return counter ? [counter.toString(), counter.value] : target[name];
+    get: (_target: Record<string, [string, number]>, name: string) => {
+      const counter = Counter.get(name);
+      return [counter.toString(), counter.value];
     },
 
     // Don't allow setting the value of a counter.
