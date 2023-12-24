@@ -61,6 +61,14 @@ export class Counter {
 
   private _toString: () => string = defaultCounterToString;
 
+  /**
+   * @param {string} name - The name of the counter.
+   * @param {?string} [resetBy=null] - The name of another counter that, when
+   *   incremented, will reset this counter. If null, the counter will not be reset by
+   *   any other counter.
+   * @param {number} [_value=0] - The initial value of the counter.
+   * @throws {TexError} If a counter with the same name already exists.
+   */
   public constructor(
     public readonly name: string,
     resetBy: string | null = null,
