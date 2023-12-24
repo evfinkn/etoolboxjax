@@ -42,13 +42,7 @@ export class Counter {
   public static the(parser: TexParser, name: string) {
     name = name.substring(4); // Remove '\the' from the name.
     const counter = Counter.get(name);
-    parser.Push(
-      new TexParser(
-        counter.toString(),
-        parser.stack.env,
-        parser.configuration,
-      ).mml(),
-    );
+    pushMath(parser, counter.toString());
   }
 
   /** The counters that are reset when this counter's value is changed. */
@@ -249,6 +243,12 @@ export function addMacro(
   const handlers = parser.configuration.handlers;
   const handler = handlers.retrieve(handlerName) as CommandMap;
   handler.add(cs, new Macro(cs, func, attr));
+}
+
+export function pushMath(parser: TexParser, math: string) {
+  parser.Push(
+    new TexParser(math, parser.stack.env, parser.configuration).mml(),
+  );
 }
 
 export type FormatMethod = "toArabic" | "toRoman" | "toAlph" | "toFnSymbol";

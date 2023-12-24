@@ -112,9 +112,7 @@ CounterMethods.Format = function (
     const def = mathvariant ? { mathvariant } : {};
     parser.Push(ParseUtil.internalText(parser, formatted, def));
   } else {
-    parser.Push(
-      new TexParser(formatted, parser.stack.env, parser.configuration).mml(),
-    );
+    Util.pushMath(parser, formatted);
   }
 };
 
