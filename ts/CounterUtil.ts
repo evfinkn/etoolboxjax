@@ -169,7 +169,6 @@ MJCONFIG.counters = new Proxy(
  */
 export function GetCounter(parser: TexParser, name: string): Counter {
   const counterName = parser.GetArgument(name);
-  console.debug("counterName: ", counterName);
   return Counter.get(counterName);
 }
 
