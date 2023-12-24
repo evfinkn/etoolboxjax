@@ -109,10 +109,6 @@ export class Counter {
     });
   }
 
-  public add(n: number): void {
-    this.value += n;
-  }
-
   public get superCounter(): Counter | null {
     return this._superCounter;
   }
