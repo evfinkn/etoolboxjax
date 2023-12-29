@@ -1,7 +1,6 @@
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
-import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 
 import * as Util from "./CounterUtil.js";
@@ -109,12 +108,16 @@ CounterMethods.Format = function (
   let formatted = Util[formatMethod](counter.value);
   formatted = capital ? formatted.toUpperCase() : formatted.toLowerCase();
   if (/^[a-zA-Z]*$/.test(formatted)) {
-    const mathvariant = parser.stack.env.font || parser.stack.env.mathvariant;
-    const def = mathvariant ? { mathvariant } : {};
-    parser.Push(ParseUtil.internalText(parser, formatted, def));
+    Util.pushText(parser, formatted);
   } else {
     Util.pushMath(parser, formatted);
   }
+};
+
+CounterMethods.RomanNumeral = function (parser: TexParser, name: string) {
+  const num = Util.GetNumber(parser, name);
+  const formatted = Util.toRoman(num);
+  Util.pushText(parser, formatted.toLowerCase());
 };
 
 export default CounterMethods;

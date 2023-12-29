@@ -252,6 +252,12 @@ export function pushMath(parser: TexParser, math: string) {
   );
 }
 
+export function pushText(parser: TexParser, text: string) {
+  const mathvariant = parser.stack.env.font || parser.stack.env.mathvariant;
+  const def = mathvariant ? { mathvariant } : {};
+  parser.Push(ParseUtil.internalText(parser, text, def));
+}
+
 export type FormatMethod = "toArabic" | "toRoman" | "toAlph" | "toFnSymbol";
 
 export function toArabic(num: number): string {
