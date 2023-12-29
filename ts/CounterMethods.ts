@@ -1,10 +1,11 @@
-import { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
-import TexParser from "mathjax-full/js/input/tex/TexParser.js";
+import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
+import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
+
+import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
+import TexError from "mathjax-full/js/input/tex/TexError.js";
 
 import * as Util from "./CounterUtil.js";
 import { Counter, COUNTER_MAP } from "./CounterUtil.js";
-import TexError from "mathjax-full/js/input/tex/TexError.js";
-import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
 
 const CounterMethods: Record<string, ParseMethod> = {};
 

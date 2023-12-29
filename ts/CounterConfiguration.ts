@@ -1,10 +1,10 @@
-import {
-  Configuration,
-  ParserConfiguration,
-} from "mathjax-full/js/input/tex/Configuration.js";
+import type { ParserConfiguration } from "mathjax-full/js/input/tex/Configuration.js";
+
+import { Configuration } from "mathjax-full/js/input/tex/Configuration.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import "./CounterMappings.js";
+
 import { COMMAND_MAP, COUNTER_MAP } from "./CounterUtil.js";
 
 /**
