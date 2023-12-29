@@ -18,6 +18,7 @@ export const CounterCommandMap = new CommandMap(
     fnsymbol: ["Format", "toFnSymbol"],
     counterwithin: "CounterWithin",
     counterwithout: "CounterWithout",
+    number: "Number",
     romannumeral: "RomanNumeral",
   },
   CounterMethods,

@@ -114,6 +114,11 @@ CounterMethods.Format = function (
   }
 };
 
+CounterMethods.Number = function (parser: TexParser, name: string) {
+  const num = Util.GetNumber(parser, name);
+  Util.pushMath(parser, num.toString());
+};
+
 CounterMethods.RomanNumeral = function (parser: TexParser, name: string) {
   const num = Util.GetNumber(parser, name);
   const formatted = Util.toRoman(num);
