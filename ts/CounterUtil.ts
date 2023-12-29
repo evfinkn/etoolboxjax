@@ -7,6 +7,8 @@ import TexParser from "mathjax-full/js/input/tex/TexParser.js";
 import { Macro } from "mathjax-full/js/input/tex/Token.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
+import { evaluate } from "./numexpr.js";
+
 const MJCONFIG = MathJax.config;
 
 const FN_SYMBOLS = [
@@ -156,10 +158,9 @@ export function GetCounter(parser: TexParser, name: string): Counter {
 
 export function GetNumber(parser: TexParser, name: string): number {
   const arg = parser.GetArgument(name);
-  const counterName = /\\value\{([a-zA-Z]+)\}/.exec(arg)?.[1];
-  if (counterName) return Counter.get(counterName).value;
-
-  const num = parseInt(arg);
+  let replaced = replaceValue(arg);
+  replaced = replaceNumExpr(replaced);
+  const num = parseFloat(replaced);
   if (Number.isFinite(num)) return num;
 
   throw new TexError("InvalidNumber", `Invalid number "${arg}"`);
@@ -244,6 +245,18 @@ export function addMacro(
   const handlers = parser.configuration.handlers;
   const handler = handlers.retrieve(handlerName) as CommandMap;
   handler.add(cs, new Macro(cs, func, attr));
+}
+
+export function replaceValue(str: string): string {
+  return str.replace(/\\value\{([^\}]+)\}/g, (_match, counterName) =>
+    Counter.get(counterName).value.toString(),
+  );
+}
+
+export function replaceNumExpr(str: string): string {
+  return str.replace(/\\numexpr\{([^\}]+)\}/g, (_match, expr) =>
+    evaluate(expr).toString(),
+  );
 }
 
 export function pushMath(parser: TexParser, math: string) {
