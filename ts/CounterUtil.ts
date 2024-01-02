@@ -253,10 +253,39 @@ export function replaceValue(str: string): string {
   );
 }
 
-export function replaceNumExpr(str: string): string {
+/**
+ * Replaces all instances of "simple" `\numexpr` expressions with their evaluated
+ * values. "Simple" expressions are those that do not contain `\value` or nested
+ * `\numexpr` expressions.
+ * @param {string} str The string containing the `\numexpr` expressions.
+ * @returns {string} The string with all "simple" `\numexpr` expressions replaced.
+ */
+function _replaceSimpleNumExpr(str: string): string {
   return str.replace(/\\numexpr\{([^\}]+)\}/g, (_match, expr) =>
     evaluate(expr).toString(),
   );
+}
+
+/**
+ * Replaces all instances of `\numexpr` with their evaluated values.
+ * This handles nested `\numexpr` expressions as well as `\value` expressions.
+ * For example, if the counter `foo` has a value of 8, then
+ * `\numexpr{3 * \numexpr{(\value{foo} / 4) + 1}}` will be replaced with "9".
+ * @param {string} str The string to parse.
+ * @returns {string} The string with all `\numexpr` expressions replaced.
+ */
+export function replaceNumExpr(str: string): string {
+  str = replaceValue(str);
+  let replaced = _replaceSimpleNumExpr(str);
+  while (replaced !== str) {
+    str = replaced;
+    replaced = _replaceSimpleNumExpr(str);
+  }
+  return str;
+}
+
+export function numexpr(str: string): number {
+  return evaluate(replaceNumExpr(str));
 }
 
 export function pushMath(parser: TexParser, math: string) {
