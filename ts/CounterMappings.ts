@@ -1,10 +1,10 @@
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import CounterMethods from "./CounterMethods.js";
-import { COMMAND_MAP } from "./CounterUtil.js";
+import { COUNTER_CMD_MAP } from "./CounterUtil.js";
 
 export const CounterCommandMap = new CommandMap(
-  COMMAND_MAP,
+  COUNTER_CMD_MAP,
   {
     newcounter: "NewCounter",
     setcounter: "SetCounter",

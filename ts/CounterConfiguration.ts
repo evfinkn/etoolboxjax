@@ -5,7 +5,7 @@ import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import "./CounterMappings.js";
 
-import { COMMAND_MAP, COUNTER_MAP } from "./CounterUtil.js";
+import { COUNTER_CMD_MAP, COUNTER_MAP } from "./CounterUtil.js";
 
 /**
  * Initializes the counter package.
@@ -23,6 +23,6 @@ const init = function (config: ParserConfiguration) {
 };
 
 export const CounterConfiguration = Configuration.create("counter", {
-  handler: { macro: [COMMAND_MAP] },
+  handler: { macro: [COUNTER_CMD_MAP] },
   init,
 });

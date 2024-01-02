@@ -23,7 +23,7 @@ const FN_SYMBOLS = [
   "\\ddagger\\ddagger",
 ];
 
-export const COMMAND_MAP = "counter-commands";
+export const COUNTER_CMD_MAP = "counter-commands";
 export const COUNTER_MAP = "counter-counters";
 
 export class Counter {

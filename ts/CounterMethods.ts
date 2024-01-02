@@ -3,8 +3,8 @@ import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 
-import * as Util from "./CounterUtil.js";
 import { Counter, COUNTER_MAP } from "./CounterUtil.js";
+import * as Util from "./Util.js";
 
 const CounterMethods: Record<string, ParseMethod> = {};
 
