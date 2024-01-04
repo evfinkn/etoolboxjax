@@ -1,20 +1,11 @@
-import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
+import type { CommandMapRecord } from "./Util.js";
 
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import EtoolboxMethods from "./EtoolboxMethods.js";
 import { COMMAND_MAP } from "./EtoolboxUtil.js";
 
-// prettier-ignore
-type NonParseParams<F> =
-  F extends (parser: TexParser, name: string, ...args: infer R) => any ? R : never;
-
-type EtoolboxNames = keyof typeof EtoolboxMethods;
-type EtoolboxParameters<K> = K extends EtoolboxNames
-  ? K | [K, ...NonParseParams<(typeof EtoolboxMethods)[K]>]
-  : never;
-
-const commands: Record<string, EtoolboxParameters<EtoolboxNames>> = {
+const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   // TeX flags
   // NewFlag takes errorIfDefined argument
   newbool: ["NewFlag", "bool", true],
