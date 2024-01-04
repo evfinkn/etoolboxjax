@@ -3,7 +3,7 @@ import type { CommandMapRecord } from "./Util.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import EtoolboxMethods from "./EtoolboxMethods.js";
-import { COMMAND_MAP } from "./EtoolboxUtil.js";
+import { ETOOLBOX_CMD_MAP } from "./EtoolboxUtil.js";
 
 const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   // TeX flags
@@ -50,7 +50,7 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
 };
 
 export const EtoolboxCommandMap = new CommandMap(
-  COMMAND_MAP,
+  ETOOLBOX_CMD_MAP,
   commands,
   EtoolboxMethods,
 );

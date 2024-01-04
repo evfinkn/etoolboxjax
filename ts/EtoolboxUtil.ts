@@ -3,6 +3,8 @@ import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 
+export const ETOOLBOX_CMD_MAP = "etoolbox-commands";
+
 const flags: Record<string, boolean> = {};
 
 export const Flag = {
@@ -53,5 +55,3 @@ export function PushConditionsBranch(
 ): void {
   args[0].Push(ParseConditionsBranch(...args));
 }
-
-export const COMMAND_MAP = "etoolbox-commands";

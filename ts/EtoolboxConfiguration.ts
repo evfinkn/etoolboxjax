@@ -5,7 +5,7 @@ import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import "./EtoolboxMappings.js";
 
-import { COMMAND_MAP } from "./EtoolboxUtil.js";
+import { ETOOLBOX_CMD_MAP } from "./EtoolboxUtil.js";
 
 // /**
 //  * Initializes the counter package.
@@ -23,6 +23,6 @@ import { COMMAND_MAP } from "./EtoolboxUtil.js";
 // };
 
 export const EtoolboxConfiguration = Configuration.create("etoolbox", {
-  handler: { macro: [COMMAND_MAP] },
+  handler: { macro: [ETOOLBOX_CMD_MAP] },
   // init,
 });
