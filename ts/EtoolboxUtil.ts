@@ -1,6 +1,33 @@
 import type { MmlNode } from "mathjax-full/js/core/MmlTree/MmlNode.js";
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 
+import TexError from "mathjax-full/js/input/tex/TexError.js";
+
+const flags: Record<string, boolean> = {};
+
+export const Flag = {
+  get(name: string): boolean {
+    const bool = flags[name];
+    if (bool !== undefined) return bool;
+
+    throw new TexError("UndefinedFlag", `Undefined flag "${name}"`);
+  },
+
+  set(name: string, value: boolean): void {
+    if (flags[name] === undefined) {
+      throw new TexError("UndefinedFlag", `Undefined flag "${name}"`);
+    }
+    flags[name] = value;
+  },
+
+  create(name: string, errorIfDefined: boolean = false): void {
+    if (errorIfDefined && flags[name] !== undefined) {
+      throw new TexError("DuplicateFlag", `Flag "${name}" already defined`);
+    }
+    flags[name] = false;
+  },
+};
+
 export function ParseConditionsBranch(
   parser: TexParser,
   name: string,
