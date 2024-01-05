@@ -59,6 +59,9 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   ifnumgeq: ["IfNumComp", ">="],
   ifnumeven: ["IfNumParity", 0],
   ifnumodd: ["IfNumParity", 1],
+  DeclareListParser: "DeclareListParser",
+  docsvlist: ["DoListParser", ","],
+  forcsvlist: ["ForListParser", ","],
 };
 
 export const EtoolboxCommandMap = new CommandMap(

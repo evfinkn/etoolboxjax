@@ -5,7 +5,7 @@ import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
-import { Flag } from "./EtoolboxUtil.js";
+import { Flag, LIST_PARSER_MAP } from "./EtoolboxUtil.js";
 import * as Util from "./Util.js";
 
 const handlerTypes: HandlerType[] = [
@@ -122,6 +122,47 @@ const EtoolboxMethods = {
   IfNumParity(parser: TexParser, name: string, parity: 0 | 1) {
     const num = Util.numexpr(parser.GetArgument(name));
     Util.PushConditionsBranch(parser, name, num % 2 === parity);
+  },
+
+  DeclareListParser(parser: TexParser, name: string) {
+    const star = parser.GetStar();
+    const cs = Util.GetCsNameArgument(parser, name, true);
+    const separator = parser.GetArgument(name);
+    const command = star
+      ? EtoolboxMethods.ForListParser
+      : EtoolboxMethods.DoListParser;
+    Util.addMacro(parser, LIST_PARSER_MAP, cs, command, [separator]);
+  },
+
+  DoListParser(parser: TexParser, name: string, separator: string) {
+    const listString = parser.GetArgument(name);
+    const list = Util.separateList(listString, separator);
+    const handlers = parser.configuration.handlers;
+    const newCommands = handlers.retrieve("new-Command") as CommandMap;
+    const doMacro = newCommands.lookup("do");
+    if (!doMacro) {
+      throw new TexError(
+        "UndefinedMacro",
+        `\\do macro not defined, required for ${name}`,
+      );
+    }
+    list.forEach((item) => doMacro.func(parser, "do", item));
+  },
+
+  ForListParser(parser: TexParser, name: string, separator: string) {
+    const cs = Util.GetCsNameArgument(parser, name, true);
+    const listString = parser.GetArgument(name);
+    const list = Util.separateList(listString, separator);
+    const handlers = parser.configuration.handlers;
+    const map = handlers.get("macro").applicable(cs);
+    const macro = map?.parserFor?.(cs);
+    if (!macro) {
+      throw new TexError(
+        "UndefinedMacro",
+        `Undefined macro "${cs}" used in ${name}`,
+      );
+    }
+    list.forEach((item) => macro(parser, cs, item));
   },
 } satisfies Record<string, ParseMethod>;
 
