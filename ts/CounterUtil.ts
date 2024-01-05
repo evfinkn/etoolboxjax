@@ -29,9 +29,9 @@ export const COUNTER_MAP = "counter-counters";
 export class Counter {
   private static counters: Record<string, Counter> = {};
 
-  public static get(name: string): Counter {
+  public static get(name: string, errorIfUndefined: boolean = true): Counter {
     const counter = Counter.counters[name];
-    if (counter) return counter;
+    if (counter || !errorIfUndefined) return counter;
 
     throw new TexError("UndefinedCounter", `Undefined counter "${name}"`);
   }
