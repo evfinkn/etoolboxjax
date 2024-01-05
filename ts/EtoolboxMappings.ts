@@ -26,6 +26,8 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   iftoggle: ["IfFlag", "toggle", false],
   nottoggle: ["IfFlag", "toggle", true],
   // Macro tests
+  // TODO: etoolbox has a difference between commands with and without the cs-prefix,
+  //       is it worth implementing?
   // IfDef takes negate argument
   ifdef: ["IfDef", false],
   ifcsdef: ["IfDef", false],
@@ -36,6 +38,11 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   ifcsmacro: "IfDefMacro",
   ifdefparam: ["IfDefMacro", true],
   ifcsparam: ["IfDefMacro", true],
+  // Counter tests
+  // TODO: we don't have \newcount so these all test \newcounter
+  ifdefcounter: "IfDefCounter",
+  ifcscounter: "IfDefCounter",
+  ifltxcounter: "IfDefCounter",
   // String tests
   ifstrequal: ["IfStrEqual"],
   // IfStrEqual takes trim and negate arguments

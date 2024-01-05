@@ -1,9 +1,9 @@
 import type { HandlerType } from "mathjax-full/js/input/tex/MapHandler.js";
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
-import type { MacroMap } from "mathjax-full/js/input/tex/TokenMap.js";
 import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
+import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import { Flag } from "./EtoolboxUtil.js";
 import * as Util from "./Util.js";
@@ -27,6 +27,11 @@ const relations: Record<RelationSymbol, (a: number, b: number) => boolean> = {
 };
 
 const EtoolboxMethods = {
+  DefCounter(parser: TexParser, name: string) {
+    const counter = Util.GetCounter(parser, name);
+    counter.value = Util.numexpr(parser.GetArgument(name));
+  },
+
   // TODO: Flag error messages will be confusing because names will be prefixed with
   //       "bool-" or "toggle-"
   NewFlag(
@@ -69,11 +74,17 @@ const EtoolboxMethods = {
   IfDefMacro(parser: TexParser, name: string, withParams?: boolean) {
     const cs = Util.GetCsNameArgument(parser, name);
     const handlers = parser.configuration.handlers;
-    const newCommands = handlers.retrieve("new-Command") as MacroMap;
+    const newCommands = handlers.retrieve("new-Command") as CommandMap;
     const macro = newCommands.lookup(cs);
     const condition =
       macro && (withParams === undefined || withParams === !!macro.args.length);
     Util.PushConditionsBranch(parser, name, condition);
+  },
+
+  IfDefCounter(parser: TexParser, name: string) {
+    const cs = Util.GetCsNameArgument(parser, name);
+    const counter = Util.Counter.get(cs, false);
+    Util.PushConditionsBranch(parser, name, !!counter);
   },
 
   IfStrEqual(parser: TexParser, name: string) {
