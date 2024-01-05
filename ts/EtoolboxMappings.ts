@@ -31,6 +31,11 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   ifcsdef: ["IfDef", false],
   ifundef: ["IfDef", true],
   ifcsundef: ["IfDef", true],
+  // IfDefMacro takes withParams argument (undefined if okay either way)
+  ifdefmacro: "IfDefMacro",
+  ifcsmacro: "IfDefMacro",
+  ifdefparam: ["IfDefMacro", true],
+  ifcsparam: ["IfDefMacro", true],
   // String tests
   ifstrequal: ["IfStrEqual"],
   // IfStrEqual takes trim and negate arguments

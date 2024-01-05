@@ -1,5 +1,6 @@
 import type { HandlerType } from "mathjax-full/js/input/tex/MapHandler.js";
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
+import type { MacroMap } from "mathjax-full/js/input/tex/TokenMap.js";
 import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
@@ -63,6 +64,16 @@ const EtoolboxMethods = {
     );
     const isDefined = handlers.some((handler) => handler.contains(cs));
     Util.PushConditionsBranch(parser, name, isDefined, negate);
+  },
+
+  IfDefMacro(parser: TexParser, name: string, withParams?: boolean) {
+    const cs = Util.GetCsNameArgument(parser, name);
+    const handlers = parser.configuration.handlers;
+    const newCommands = handlers.retrieve("new-Command") as MacroMap;
+    const macro = newCommands.lookup(cs);
+    const condition =
+      macro && (withParams === undefined || withParams === !!macro.args.length);
+    Util.PushConditionsBranch(parser, name, condition);
   },
 
   IfStrEqual(parser: TexParser, name: string) {
