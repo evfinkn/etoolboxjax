@@ -76,8 +76,10 @@ const EtoolboxMethods = {
     const handlers = parser.configuration.handlers;
     const newCommands = handlers.retrieve("new-Command") as CommandMap;
     const macro = newCommands.lookup(cs);
+    // macro.func.length - 2 because first two arguments are parser and name
     const condition =
-      macro && (withParams === undefined || withParams === !!macro.args.length);
+      macro &&
+      (withParams === undefined || withParams === !!(macro.func.length - 2));
     Util.PushConditionsBranch(parser, name, condition);
   },
 
