@@ -2,6 +2,7 @@ import type { HandlerType } from "mathjax-full/js/input/tex/MapHandler.js";
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
+import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
@@ -25,6 +26,23 @@ const relations: Record<RelationSymbol, (a: number, b: number) => boolean> = {
   "<=": (a, b) => a <= b,
   ">=": (a, b) => a >= b,
 };
+
+function expandListParser(
+  parser: TexParser,
+  name: string,
+  separator: string,
+  handler: string,
+) {
+  const listString = parser.GetArgument(name);
+  const list = Util.separateList(listString, separator);
+  const expanded = list.map((item) => `${handler}{${item}}`).join("");
+  parser.string = ParseUtil.addArgs(
+    parser,
+    expanded,
+    parser.string.slice(parser.i),
+  );
+  parser.i = 0;
+}
 
 const EtoolboxMethods = {
   DefCounter(parser: TexParser, name: string) {
@@ -135,34 +153,12 @@ const EtoolboxMethods = {
   },
 
   DoListParser(parser: TexParser, name: string, separator: string) {
-    const listString = parser.GetArgument(name);
-    const list = Util.separateList(listString, separator);
-    const handlers = parser.configuration.handlers;
-    const newCommands = handlers.retrieve("new-Command") as CommandMap;
-    const doMacro = newCommands.lookup("do");
-    if (!doMacro) {
-      throw new TexError(
-        "UndefinedMacro",
-        `\\do macro not defined, required for ${name}`,
-      );
-    }
-    list.forEach((item) => doMacro.func(parser, "do", item));
+    expandListParser(parser, name, separator, "\\do");
   },
 
   ForListParser(parser: TexParser, name: string, separator: string) {
-    const cs = Util.GetCsNameArgument(parser, name, true);
-    const listString = parser.GetArgument(name);
-    const list = Util.separateList(listString, separator);
-    const handlers = parser.configuration.handlers;
-    const map = handlers.get("macro").applicable(cs);
-    const macro = map?.parserFor?.(cs);
-    if (!macro) {
-      throw new TexError(
-        "UndefinedMacro",
-        `Undefined macro "${cs}" used in ${name}`,
-      );
-    }
-    list.forEach((item) => macro(parser, cs, item));
+    const handler = Util.GetCsNameArgument(parser, name, true);
+    expandListParser(parser, name, separator, handler);
   },
 } satisfies Record<string, ParseMethod>;
 
