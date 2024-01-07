@@ -9,25 +9,34 @@ export const LIST_PARSER_MAP = "etoolbox-list-parsers";
 const flags: Record<string, boolean> = {};
 
 export const Flag = {
-  get(name: string): boolean {
-    const bool = flags[name];
+  get(type: string, name: string): boolean {
+    const bool = flags[`${type}-${name}`];
     if (bool !== undefined) return bool;
 
-    throw new TexError("UndefinedFlag", `Undefined flag "${name}"`);
+    throw new TexError("UndefinedFlag", `Undefined ${type} "${name}"`);
   },
 
-  set(name: string, value: boolean): void {
-    if (flags[name] === undefined) {
-      throw new TexError("UndefinedFlag", `Undefined flag "${name}"`);
+  set(type: string, name: string, value: boolean): void {
+    const key = `${type}-${name}`;
+    if (flags[key] === undefined) {
+      throw new TexError("UndefinedFlag", `Undefined ${type} "${name}"`);
     }
-    flags[name] = value;
+    flags[key] = value;
   },
 
-  create(name: string, errorIfDefined: boolean = false): void {
-    if (errorIfDefined && flags[name] !== undefined) {
-      throw new TexError("DuplicateFlag", `Flag "${name}" already defined`);
+  create(type: string, name: string, errorIfDefined: boolean = false): void {
+    const key = `${type}-${name}`;
+    if (flags[key] !== undefined) {
+      if (errorIfDefined) {
+        const capType = type[0].toUpperCase() + type.slice(1);
+        throw new TexError(
+          "DuplicateFlag",
+          `${capType} "${name}" already defined`,
+        );
+      }
+      return;
     }
-    flags[name] = false;
+    flags[key] = false;
   },
 };
 
