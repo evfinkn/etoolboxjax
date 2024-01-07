@@ -60,6 +60,7 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   ifnumgeq: ["IfNumComp", ">="],
   ifnumeven: ["IfNumParity", 0],
   ifnumodd: ["IfNumParity", 1],
+  // List parsers
   DeclareListParser: "DeclareListParser",
   docsvlist: ["DoListParser", ","],
   forcsvlist: ["ForListParser", ","],
