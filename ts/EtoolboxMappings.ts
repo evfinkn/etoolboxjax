@@ -65,6 +65,13 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   forcsvlist: ["ForListParser", ","],
 };
 
+/**
+ * In `etoolbox`, the cs-prefixed versions are called with a control sequence *name*
+ * rather than a control sequence. For example, `ifdef` is called like
+ * `\ifdef{\cs}{}{}`, whereas `\ifcsdef` is called like `\ifcsdef{cs}{}{}`. However,
+ * this port uses the same command for both. That is, `\ifdef` can be called either way,
+ * and `\ifcsdef` is an alias for `\ifdef`.
+ */
 export const EtoolboxCommandMap = new CommandMap(
   ETOOLBOX_CMD_MAP,
   commands,
