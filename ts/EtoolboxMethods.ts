@@ -45,24 +45,69 @@ function expandListParser(
 }
 
 const EtoolboxMethods = {
+  /**
+   * Handles `\defcounter{<counter>}{<integer expression>}`.
+   *
+   * This evaluates `<integer expression>` with `\numexpr` and sets `<counter>` to the
+   * result. If `<counter>` is undefined, an error is thrown.
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   */
   DefCounter(parser: TexParser, name: string) {
     const counter = Util.GetCounter(parser, name);
     counter.value = Util.numexpr(parser.GetArgument(name));
   },
 
-  // TODO: Flag error messages will be confusing because names will be prefixed with
-  //       "bool-" or "toggle-"
+  /**
+   * Handles `\newbool`, `\newtoggle`, `\providebool`, and `\providetoggle`.
+   *
+   * Each command is called with a single argument, `<flag>`. If `<flag>` is undefined,
+   * it is created with an initial value of false. Otherwise, `\newbool` and
+   * `\newtoggle` throw an error while `\providebool` and `\providetoggle` do nothing.
+   * A bool and a toggle can have the same name, but they are treated as separate flags.
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   * @param {string} type The type of flag to define. This is used to distinguish
+   *   between bools and toggles and should usually be either "bool" or "toggle".
+   * @param {boolean} [errorIfDefined] Whether to throw an error if `<flag>` is already
+   *   defined.
+   */
   NewFlag(
     parser: TexParser,
     name: string,
-    prefix: string,
+    type: string,
     errorIfDefined: boolean,
   ) {
     const cs = Util.GetCsNameArgument(parser, name);
-    Flag.create(`${prefix}-${cs}`, errorIfDefined);
+    Flag.create(type, cs, errorIfDefined);
   },
 
-  SetFlag(parser: TexParser, name: string, prefix: string, value?: boolean) {
+  /**
+   * Handles commands related to changing the value of a flag.
+   *
+   * Specifically, this handles the following commands:
+   *
+   * - `\setbool{<flag>}{<value>}`
+   * - `\booltrue{<flag>}`
+   * - `\boolfalse{<flag>}`
+   * - `\settoggle{<flag>}{<value>}`
+   * - `\toggletrue{<flag>}`
+   * - `\togglefalse{<flag>}`
+   *
+   * An error is thrown if `<flag>` is undefined. A bool and a toggle can have the same
+   * name, but they are treated as separate flags. For `\setbool` and `\settoggle`,
+   * `<value>` must be either `true` or `false`. Otherwise, an error is thrown.
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   * @param {string} type The type of flag to set. This is used to distinguish
+   *   between bools and toggles and should usually be either "bool" or "toggle".
+   * @param {boolean} [value] The value to set the flag to. If undefined, the value is
+   *   parsed from the TeX input.
+   */
+  SetFlag(parser: TexParser, name: string, type: string, value?: boolean) {
     const cs = Util.GetCsNameArgument(parser, name);
     if (value === undefined) {
       const arg = parser.GetArgument(name);
@@ -71,15 +116,44 @@ const EtoolboxMethods = {
       }
       value = arg === "true";
     }
-    Flag.set(`${prefix}-${cs}`, value);
+    Flag.set(type, cs, value);
   },
 
-  IfFlag(parser: TexParser, name: string, prefix: string, negate: boolean) {
+  /**
+   * Handles `\ifbool`, `\notbool`, `\iftoggle`, and `\nottoggle`.
+   *
+   * Each command is called with arguments `{<flag>}{<true>}{<false>}`. If `<flag>` is
+   * true, the command expands to `<true>` and otherwise expands to `<false>`.
+   * `\notbool` and `\nottoggle` are similar, but negated.
+   *
+   * If the given flag is undefined, an error is thrown. A bool and a toggle can have
+   * the same name, but they are treated as separate flags.
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   * @param {string} type The type of flag to check. This is used to distinguish
+   *   between bools and toggles and should usually be either "bool" or "toggle".
+   * @param {boolean} negate Whether to negate the result.
+   */
+  IfFlag(parser: TexParser, name: string, type: string, negate: boolean) {
     const cs = Util.GetCsNameArgument(parser, name);
-    const bool = Flag.get(`${prefix}-${cs}`);
+    const bool = Flag.get(type, cs);
     Util.PushConditionsBranch(parser, name, bool, negate);
   },
 
+  /**
+   * Handles `\ifdef`, `\ifcsdef`, `\ifundef`, and `\ifcsundef`.
+   *
+   * Each command is called with arguments `{<command>}{<true>}{<false>}`. If
+   * `<command>` is defined, the command expands to `<true>` and otherwise expands to
+   * `<false>`. `\ifundef` and `\ifcsundef` are similar, but negated.
+   *
+   * `\ifcsdef` and `\ifcsundef` are aliases for `\ifdef` and `\ifundef`, respectively.
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   * @param {boolean} negate Whether to negate the result.
+   */
   IfDef(parser: TexParser, name: string, negate: boolean) {
     const cs = Util.GetCsNameArgument(parser, name);
     const handlers = handlerTypes.map((type) =>
@@ -99,7 +173,7 @@ const EtoolboxMethods = {
    * must take at least one parameter.
    *
    * `\ifcsmacro` and `\ifcsparam` are aliases for `\ifdefmacro` and `\ifdefparam`,
-   * respectively.
+   * respectively. See the documentation for EtoolboxMappings.EtoolboxCommandMap.
    *
    * @param {TexParser} parser The calling parser.
    * @param {string} name The name of the calling command.
