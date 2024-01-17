@@ -1,13 +1,13 @@
 import type { HandlerType } from "mathjax-full/js/input/tex/MapHandler.js";
+import type { StackItem } from "mathjax-full/js/input/tex/StackItem.js";
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
-import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
+import * as Util from "./EtoolboxUtil.js";
 import { Flag, LIST_PARSER_MAP } from "./EtoolboxUtil.js";
-import * as Util from "./Util.js";
 
 const handlerTypes: HandlerType[] = [
   "macro",
@@ -27,21 +27,24 @@ const relations: Record<RelationSymbol, (a: number, b: number) => boolean> = {
   ">=": (a, b) => a >= b,
 };
 
-function expandListParser(
+function expandLoop(
   parser: TexParser,
-  name: string,
-  separator: string,
+  startI: number,
+  list: string[],
   handler: string,
-) {
-  const listString = parser.GetArgument(name);
-  const list = Util.separateList(listString, separator);
-  const expanded = list.map((item) => `${handler}{${item}}`).join("");
-  parser.string = ParseUtil.addArgs(
-    parser,
-    expanded,
-    parser.string.slice(parser.i),
-  );
-  parser.i = 0;
+): StackItem {
+  const handledList = list.map((e) => `${handler}{${e}}`);
+  const expanded = `${handledList.join("")}\\loopbreak`;
+  // parser.string = ParseUtil.addArgs(
+  //   parser,
+  //   expanded,
+  //   parser.string.slice(parser.i),
+  // );
+  Util.replaceParserSlice(parser, startI, parser.i, expanded);
+  const stopI = startI + expanded.length;
+  parser.i = startI;
+
+  return parser.itemFactory.create("loop").setProperties({ startI, stopI });
 }
 
 const EtoolboxMethods = {
@@ -304,19 +307,71 @@ const EtoolboxMethods = {
     const star = parser.GetStar();
     const cs = Util.GetCsNameArgument(parser, name, true);
     const separator = parser.GetArgument(name);
-    const command = star
-      ? EtoolboxMethods.ForListParser
-      : EtoolboxMethods.DoListParser;
-    Util.addMacro(parser, LIST_PARSER_MAP, cs, command, [separator]);
+    const func = EtoolboxMethods.ListParser;
+    const args = [separator];
+    if (star) args.push("\\do");
+    Util.addMacro(parser, LIST_PARSER_MAP, cs, func, args);
   },
 
-  DoListParser(parser: TexParser, name: string, separator: string) {
-    expandListParser(parser, name, separator, "\\do");
+  ListParser(
+    parser: TexParser,
+    name: string,
+    separator: string,
+    handler?: string,
+  ) {
+    const startI = parser.i - name.length;
+    handler ??= parser.GetArgument(name);
+    const listString = parser.GetArgument(name);
+    const list = Util.separateList(listString, separator);
+    return expandLoop(parser, startI, list, handler);
   },
 
-  ForListParser(parser: TexParser, name: string, separator: string) {
-    const handler = Util.GetCsNameArgument(parser, name, true);
-    expandListParser(parser, name, separator, handler);
+  NewList(parser: TexParser, name: string) {
+    const cs = Util.GetCsNameArgument(parser, name);
+    Util.List.create(cs);
+  },
+
+  ListAdd(parser: TexParser, name: string) {
+    const list = Util.GetList(parser, name);
+    const item = parser.GetArgument(name);
+    if (item !== "") list.push(item);
+  },
+
+  ListRemove(parser: TexParser, name: string) {
+    const list = Util.GetList(parser, name);
+    const item = parser.GetArgument(name);
+    const index = list.indexOf(item);
+    if (index !== -1) list.splice(index, 1);
+  },
+
+  ListLoop(parser: TexParser, name: string, handler?: string) {
+    const startI = parser.i - name.length;
+    handler ??= parser.GetArgument(name);
+    const list = Util.GetList(parser, name);
+    return expandLoop(parser, startI, list, handler);
+  },
+
+  LoopBreak(parser: TexParser, name: string) {
+    const top = parser.stack.Top();
+    if (!top.isKind("loop")) {
+      throw new TexError(
+        "UnexpectedLoopBreak",
+        "\\loopbreak must be inside a loop",
+      );
+    }
+    parser.i = top.getProperty("stopI") as number;
+    return parser.itemFactory.create("loopBreak");
+  },
+
+  IfInList(parser: TexParser, name: string) {
+    const item = parser.GetArgument(name);
+    const list = Util.GetList(parser, name);
+    Util.PushConditionsBranch(parser, name, list.includes(item));
+  },
+
+  IfRomanNumeral(parser: TexParser, name: string) {
+    const str = parser.GetArgument(name);
+    Util.PushConditionsBranch(parser, name, Util.isRomanNumeral(str));
   },
 } satisfies Record<string, ParseMethod>;
 

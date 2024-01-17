@@ -5,6 +5,7 @@ import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import "./EtoolboxMappings.js";
 
+import { LoopBreakItem, LoopItem } from "./EtoolboxItems.js";
 import { ETOOLBOX_CMD_MAP, LIST_PARSER_MAP } from "./EtoolboxUtil.js";
 
 /**
@@ -24,5 +25,9 @@ const init = function (config: ParserConfiguration) {
 
 export const EtoolboxConfiguration = Configuration.create("etoolbox", {
   handler: { macro: [ETOOLBOX_CMD_MAP] },
+  items: {
+    [LoopItem.prototype.kind]: LoopItem,
+    [LoopBreakItem.prototype.kind]: LoopBreakItem,
+  },
   init,
 });

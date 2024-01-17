@@ -9,6 +9,8 @@ import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import { evaluate } from "./numexpr.js";
 
+export * from "./Util.js";
+
 const MJCONFIG = MathJax.config;
 
 const FN_SYMBOLS = [

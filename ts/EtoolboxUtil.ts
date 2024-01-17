@@ -3,6 +3,8 @@ import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 
+export * from "./Util.js";
+
 export const ETOOLBOX_CMD_MAP = "etoolbox-commands";
 export const LIST_PARSER_MAP = "etoolbox-list-parsers";
 
@@ -39,6 +41,32 @@ export const Flag = {
     flags[key] = false;
   },
 };
+
+const list: Record<string, string[]> = {};
+
+export const List = {
+  get(name: string, errorIfUndefined: boolean = false): string[] {
+    const items = list[name];
+    if (items || !errorIfUndefined) return items;
+
+    throw new TexError("UndefinedList", `Undefined list "${name}"`);
+  },
+
+  create(name: string, errorIfDefined: boolean = false): void {
+    if (list[name] !== undefined) {
+      if (errorIfDefined) {
+        throw new TexError("DuplicateList", `List "${name}" already defined`);
+      }
+      return;
+    }
+    list[name] = [];
+  },
+};
+
+export function GetList(parser: TexParser, name: string): string[] {
+  const listName = parser.GetArgument(name);
+  return List.get(listName);
+}
 
 export function ParseConditionsBranch(
   parser: TexParser,
@@ -80,7 +108,6 @@ export function separateList(str: string, separator: string): string[] {
 
   let item = "";
   let braces = 0;
-  // use for-of str instead of for (let i = ...) because for-of str handles
   for (let i = 0; i < str.length; i++) {
     const char = str.charAt(i);
     if (char === "{" && (i === 0 || str.charAt(i - 1) !== "\\")) {
@@ -111,3 +138,33 @@ export function separateList(str: string, separator: string): string[] {
   list.push(item);
   return list;
 }
+
+export function isRomanNumeral(str: string): boolean {
+  return /^(?:M*)(?:CM|CD|D?C{0,3})(?:XC|XL|L?X{0,3})(?:IX|IV|V?I{0,3})$/i.test(
+    str,
+  );
+}
+
+const romanNums: Record<string, number> = {
+  I: 1,
+  V: 5,
+  X: 10,
+  L: 50,
+  C: 100,
+  D: 500,
+  M: 1000,
+};
+
+export function romanToNumber(str: string): number {
+  str = str.toUpperCase();
+  let sum = 0;
+  let prev = 0;
+  for (let i = str.length - 1; i >= 0; i--) {
+    const current = romanNums[str[i]];
+    sum += current < prev ? -current : current;
+    prev = current;
+  }
+  return sum;
+}
+
+export * from "./CounterUtil.js";

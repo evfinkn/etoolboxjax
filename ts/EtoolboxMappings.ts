@@ -62,8 +62,18 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   ifnumodd: ["IfNumParity", 1],
   // List parsers
   DeclareListParser: "DeclareListParser",
-  docsvlist: ["DoListParser", ","],
-  forcsvlist: ["ForListParser", ","],
+  docsvlist: ["ListParser", ",", "\\do"],
+  forcsvlist: ["ListParser", ","],
+  // Lists
+  newlist: "NewList",
+  listadd: "ListAdd",
+  listremove: "ListRemove",
+  dolistloop: ["ListLoop", "\\do"],
+  forlistloop: "ListLoop",
+  // List tests
+  ifinlist: "IfInList",
+  // Misc
+  ifrmnum: "IfRomanNumeral",
 };
 
 /**
