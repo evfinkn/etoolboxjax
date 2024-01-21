@@ -65,7 +65,8 @@ export function postfixify(expression: string): PostfixExpression {
       } else if (token === "(") {
         operatorStack.push(token);
       } else if (token === ")") {
-        // If the token is a closing parenthesis, pop operators from the stack to the output queue
+        // If the token is a closing parenthesis, pop
+        // operators from the stack to the output queue
         while (operatorStack.length > 0 && last(operatorStack) !== "(") {
           outputQueue.push(operatorStack.pop() as Op);
         }
