@@ -74,6 +74,8 @@ export function postfixify(expression: string): PostfixExpression {
           throw new Error("Mismatched parentheses");
         }
         operatorStack.pop(); // Pop the opening parenthesis from the stack
+      } else {
+        throw new Error("Invalid token");
       }
     });
 
