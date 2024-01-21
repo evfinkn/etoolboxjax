@@ -40,15 +40,16 @@ export function postfixify(expression: string): PostfixExpression {
 
   expression
     .replace(/\s+/g, "")
-    // .replace(/(?<=^|\(|[-+*\/])(?:\+|-{2})/g, "") // remove unary plus and double minus
-    // .replace(/(?<=^|\(|[-+*\/])\-/g, "m") // replace unary minus with m
-    // handle unary plus and minus
-    .replace(/(?<=^|[-+*\/\(])([-+]+)/g, (_match, ops) => {
-      let count = 0;
-      for (let i = 0; i < ops.length; ++i) {
-        if (ops.charAt(i) === "-") count++;
+    // Handle unary plus and minus. The unary ops are always at the beginning of the
+    // expression or immediately after an operator or opening parenthesis. We replace
+    // odd numbers of "-" with "m". "+" and even numbers of "-" are removed, since
+    // they are redundant.
+    .replace(/(?<=^|[-+*\/\(])([-+]+)/g, (_match, ops: string) => {
+      let minusCount = 0;
+      for (const op of ops) {
+        if (op === "-") minusCount++;
       }
-      return count % 2 == 0 ? "" : "m";
+      return minusCount % 2 == 0 ? "" : "m";
     })
     .split(/([\(\)\+\-\*\/m])/)
     .filter((token) => token && token !== "")
