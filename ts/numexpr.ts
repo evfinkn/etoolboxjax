@@ -4,6 +4,10 @@ type OpInfo = {
   readonly assoc: "left" | "right";
 };
 type OpOrParen = Op | "(" | ")";
+
+// If the expression has a length >= 2, the last element is always an operator
+// (because its in postfix form) and the other elements are numbers or operators.
+// Otherwise, the expression is empty or has a single number.
 type PostfixExpression = [] | [number] | [...(number | Op)[], Op];
 
 const ops = new Map<Op, OpInfo>([
