@@ -54,9 +54,9 @@ export function postfixify(expression: string): PostfixExpression {
     .split(/([\(\)\+\-\*\/m])/)
     .filter((token) => token && token !== "")
     .forEach((token) => {
-      const float = parseFloat(token);
-      if (Number.isFinite(float)) {
-        outputQueue.push(float);
+      const number = Number(token);
+      if (Number.isFinite(number)) {
+        outputQueue.push(number);
       } else if (isOperator(token)) {
         while (shouldPopOp(token, last(operatorStack))) {
           outputQueue.push(operatorStack.pop() as Op);
