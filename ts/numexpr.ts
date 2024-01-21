@@ -10,7 +10,7 @@ type OpOrParen = Op | "(" | ")";
 // Otherwise, the expression is empty or has a single number.
 type PostfixExpression = [] | [number] | [...(number | Op)[], Op];
 
-const ops = new Map<Op, OpInfo>([
+const OPS = new Map<Op, OpInfo>([
   ["+", { prec: 1, assoc: "left" }],
   ["-", { prec: 1, assoc: "left" }],
   ["*", { prec: 2, assoc: "left" }],
@@ -23,14 +23,14 @@ function last<T>(array: T[]): T | undefined {
 }
 
 function isOperator(x: unknown): x is Op {
-  return ops.has(x as Op);
+  return OPS.has(x as Op);
 }
 
 function shouldPopOp(opToken1: Op, opToken2: any): boolean {
   if (!(opToken2 && isOperator(opToken2))) return false;
 
-  const op1 = ops.get(opToken1);
-  const op2 = ops.get(opToken2);
+  const op1 = OPS.get(opToken1);
+  const op2 = OPS.get(opToken2);
   return op2.prec > op1.prec || (op2.prec === op1.prec && op1.assoc === "left");
 }
 
