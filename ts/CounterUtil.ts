@@ -1,3 +1,4 @@
+import type { StackItem } from "mathjax-full/js/input/tex/StackItem.js";
 import type { Args, ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 import { MathJax } from "mathjax-full/js/components/global.js";
@@ -159,13 +160,142 @@ export function GetCounter(parser: TexParser, name: string): Counter {
 }
 
 export function GetNumber(parser: TexParser, name: string): number {
+  console.log("GetNumber");
+  console.log(`parser.i = ${parser.i}`);
+  console.log(
+    `parser.string.slice(parser.i) = ${parser.string.slice(parser.i)}`,
+  );
+  let startI = parser.i; // Start index of the argument.
+  if (parser.GetNext() === "{") startI++; // Don't include the opening brace.
+  console.log(`startI = ${startI}`);
   const arg = parser.GetArgument(name);
-  let replaced = replaceValue(arg);
-  replaced = replaceNumExpr(replaced);
-  const num = parseFloat(replaced);
+  console.log(`arg = ${arg}`);
+  const stopI = parser.i;
+  console.log(`parser.i = stopI = ${stopI}`);
+
+  const num = Number(arg);
+  console.log(`num = ${num}`);
   if (Number.isFinite(num)) return num;
 
-  throw new TexError("InvalidNumber", `Invalid number "${arg}"`);
+  parser.i = startI;
+  const result = GetNumberFromCS(parser, name);
+  parser.i = stopI;
+  return result;
+}
+
+/**
+ * @param {StackItem} [item] The item to check.
+ * @returns {boolean} Whether the item is a StackItem of kind "number" with a
+ *   numeric property "number".
+ */
+function isNumberItem(item?: StackItem): boolean {
+  return (
+    item &&
+    item.kind === "number" &&
+    typeof item.getProperty("number") === "number"
+  );
+}
+
+/**
+ * Parses a command and returns the number it represents.
+ *
+ * This function calls the command's parse method and passes `parser` for its `parser`
+ * argument. The command's parse method should return a StackItem of kind "number"
+ * with a numeric property "number". That number is returned.
+ *
+ * If `cs` is given, `parser.i` should be set to the index right after `cs` in
+ * `parser.string` before calling this function. If `cs` is not given, the next command
+ * in `parser.string` is parsed, so `parser.i` should be set to the index where the
+ * command starts (either the backslash or the first character of the command name).
+ * `parser.i` is left where the command leaves it after parsing. For example, if the
+ * command takes arguments, `parser.i` will be set to the index right after the closing
+ * brace of the last argument.
+ *
+ * @param {TexParser} parser The calling parser.
+ * @param {string} name The name of the calling command.
+ * @param {string} [cs] The control sequence of the command to parse. If not
+ *   given, the next command in the parser's string is parsed.
+ * @returns {number} The number represented by the command.
+ * @throws {TexError} If `cs` is given and is blank (empty or whitespace only).
+ * @throws {TexError} If `cs` isn't given and no control sequence can be parsed.
+ * @throws {TexError} If the command does not return a StackItem of kind "number" or
+ *  if the command does not have a "number" property of type number.
+ */
+export function GetNumberFromCS(
+  parser: TexParser,
+  name: string,
+  cs?: string,
+): number {
+  console.log("GetNumberFromCS");
+  if (!cs) {
+    if (parser.GetNext() === "\\") parser.i++;
+    cs = parser.GetCS();
+  } else if (cs.startsWith("\\")) {
+    cs = cs.substring(1);
+  }
+  cs = cs.trim();
+  console.log(`cs = ${cs}`);
+
+  if (cs === "") {
+    throw new TexError("MissingNumber", `Missing number for "${name}"`);
+  }
+
+  // const result = new TexParser(
+  //   command, parser.stack.env, parser.configuration,
+  // ).stack.Top();
+
+  const handler = parser.configuration.handlers.get("macro");
+  const result = handler.parse([parser, cs]) as StackItem;
+  console.log("result", result);
+  if (result === undefined || result === null) {
+    throw new TexError("UndefinedMacro", `Undefined macro "${cs}"`);
+  }
+
+  if (!isNumberItem(result)) {
+    throw new TexError("InvalidNumber", `Invalid number "${cs}"`);
+  }
+
+  return result.getProperty("number") as number;
+}
+
+export function GetNumberExpr(parser: TexParser, name: string): string {
+  let startI = parser.i; // Start index of the argument.
+  if (parser.GetNext() === "{") startI++; // Don't include the opening brace.
+  const expr = parser.GetArgument(name);
+  // Stop index of the argument. - 1 to make it the index of the closing brace.
+  const stopI = parser.i - 1;
+
+  // If the argument is a number, return it. We use Number instead of parseFloat
+  // because parseFloat allows trailing characters, which we don't want.
+  // Note that this will correctly return "" (or whitespace) if the argument is blank
+  // since Number("") === 0. We allow blank arguments so that the caller can decide
+  // what to do with them.
+  if (isFinite(Number(expr))) return expr;
+
+  // Set parser.i to right after the command so that the parser is where
+  // command's parse method expects it to be. + 1 is to skip the opening brace.
+  // parser.i = startI + 1;
+  // const result = GetNumberFromCS(parser, name, expr);
+  // parser.i = stopI;
+  // return result;
+
+  const string = parser.string;
+  const replaced: (string | number)[] = [];
+  for (parser.i = startI; parser.i < stopI; parser.i++) {
+    let result: string | number = string[parser.i];
+    // GetNumberFromCS will set parser.i to the index right after the command.
+    if (result === "\\") result = GetNumberFromCS(parser, name);
+    replaced.push(result);
+  }
+  // Increment so that parser.i is at the index right after the closing brace
+  // (where GetArgument leaves it).
+  parser.i++;
+  return replaced.join("");
+}
+
+export function EvalNumberExpr(parser: TexParser, name: string): number {
+  const expr = GetNumberExpr(parser, name);
+  return evaluate(expr);
 }
 
 // The following 2 methods are copied from
@@ -247,47 +377,6 @@ export function addMacro(
   const handlers = parser.configuration.handlers;
   const handler = handlers.retrieve(mapName) as CommandMap;
   handler.add(cs, new Macro(cs, func, attr));
-}
-
-export function replaceValue(str: string): string {
-  return str.replace(/\\value\{([^\}]+)\}/g, (_match, counterName) =>
-    Counter.get(counterName).value.toString(),
-  );
-}
-
-/**
- * Replaces all instances of "simple" `\numexpr` expressions with their evaluated
- * values. "Simple" expressions are those that do not contain `\value` or nested
- * `\numexpr` expressions.
- * @param {string} str The string containing the `\numexpr` expressions.
- * @returns {string} The string with all "simple" `\numexpr` expressions replaced.
- */
-function _replaceSimpleNumExpr(str: string): string {
-  return str.replace(/\\numexpr\{([^\}]+)\}/g, (_match, expr) =>
-    evaluate(expr).toString(),
-  );
-}
-
-/**
- * Replaces all instances of `\numexpr` with their evaluated values.
- * This handles nested `\numexpr` expressions as well as `\value` expressions.
- * For example, if the counter `foo` has a value of 8, then
- * `\numexpr{3 * \numexpr{(\value{foo} / 4) + 1}}` will be replaced with "9".
- * @param {string} str The string to parse.
- * @returns {string} The string with all `\numexpr` expressions replaced.
- */
-export function replaceNumExpr(str: string): string {
-  str = replaceValue(str);
-  let replaced = _replaceSimpleNumExpr(str);
-  while (replaced !== str) {
-    str = replaced;
-    replaced = _replaceSimpleNumExpr(str);
-  }
-  return str;
-}
-
-export function numexpr(str: string): number {
-  return evaluate(replaceNumExpr(str));
 }
 
 export function pushMath(parser: TexParser, math: string) {

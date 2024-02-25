@@ -3,8 +3,12 @@ import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 
+import * as Util from "./CounterUtil.js";
 import { Counter, COUNTER_MAP } from "./CounterUtil.js";
-import * as Util from "./Util.js";
+
+// Default LaTeX counters: https://en.wikibooks.org/wiki/LaTeX/Counters
+// Equation numbering with sections: https://github.com/mathjax/MathJax/issues/2427
+// Other MathJax v4 beta: https://github.com/lucasvreis/xparsejax
 
 const CounterMethods = {
   NewCounter(parser: TexParser, name: string) {
@@ -116,6 +120,12 @@ const CounterMethods = {
   Number(parser: TexParser, name: string) {
     const num = Util.GetNumber(parser, name);
     Util.pushMath(parser, num.toString());
+  },
+
+  Value(parser: TexParser, name: string) {
+    const counter = Util.GetCounter(parser, name);
+    const number = counter.value;
+    return parser.itemFactory.create("number").setProperties({ number });
   },
 
   RomanNumeral(parser: TexParser, name: string) {

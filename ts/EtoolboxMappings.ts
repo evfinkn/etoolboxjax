@@ -6,6 +6,7 @@ import EtoolboxMethods from "./EtoolboxMethods.js";
 import { ETOOLBOX_CMD_MAP } from "./EtoolboxUtil.js";
 
 const commands: CommandMapRecord<typeof EtoolboxMethods> = {
+  numexpr: "NumExpr",
   defcounter: "DefCounter",
   // TeX flags
   // NewFlag takes errorIfDefined argument

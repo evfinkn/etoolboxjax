@@ -2,20 +2,20 @@
   "build": {
     "id": "[counter]/counterjax",
     "component": "input/tex/extension/counter",
-    "js": "../js",
-    "ts": "../ts",
+    "js": "../../js",
+    "ts": "../../ts",
     "targets": [
       "CounterConfiguration.ts",
       "CounterMappings.ts",
       "CounterMethods.ts",
       "CounterUtil.ts",
-      "numexpr.ts"
+      "Util.ts"
     ]
   },
   "webpack": {
     "name": "counter",
-    "js": "../js",
+    "js": "../../js",
     "libs": ["components/src/core/lib", "components/src/input/tex-base/lib"],
-    "dist": "../browser/"
+    "dist": "../../browser/"
   }
 }

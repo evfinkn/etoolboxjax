@@ -1,0 +1,23 @@
+{
+  "build": {
+    "id": "[etoolbox]/etoolboxjax",
+    "component": "input/tex/extension/etoolbox",
+    "js": "../../js",
+    "ts": "../../ts",
+    "targets": [
+      "EtoolboxConfiguration.ts",
+      "EtoolboxItems.ts",
+      "EtoolboxMappings.ts",
+      "EtoolboxMethods.ts",
+      "EtoolboxUtil.ts",
+      "numexpr.ts",
+      "Util.ts"
+    ]
+  },
+  "webpack": {
+    "name": "etoolbox",
+    "js": "../../js",
+    "libs": ["components/src/core/lib", "components/src/input/tex-base/lib"],
+    "dist": "../../browser/"
+  }
+}

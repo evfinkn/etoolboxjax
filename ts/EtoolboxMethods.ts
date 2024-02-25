@@ -49,6 +49,20 @@ function expandLoop(
 
 const EtoolboxMethods = {
   /**
+   * Handles `\numexpr`.
+   *
+   * Evaluates the numeric expression and pushes the result to the parser stack (so
+   * that it can be parsed by commands expecting a number).
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   */
+  NumExpr(parser: TexParser, name: string) {
+    const number = Util.EvalNumberExpr(parser, name);
+    return parser.itemFactory.create("number").setProperties({ number });
+  },
+
+  /**
    * Handles `\defcounter{<counter>}{<integer expression>}`.
    *
    * This evaluates `<integer expression>` with `\numexpr` and sets `<counter>` to the
@@ -59,7 +73,7 @@ const EtoolboxMethods = {
    */
   DefCounter(parser: TexParser, name: string) {
     const counter = Util.GetCounter(parser, name);
-    counter.value = Util.numexpr(parser.GetArgument(name));
+    counter.value = Util.EvalNumberExpr(parser, name);
   },
 
   /**
@@ -273,11 +287,11 @@ const EtoolboxMethods = {
    *   parsed from the TeX input.
    */
   IfNumComp(parser: TexParser, name: string, relationSym?: RelationSymbol) {
-    const num1 = Util.numexpr(parser.GetArgument(name));
+    const num1 = Util.EvalNumberExpr(parser, name);
     if (!relationSym) {
       relationSym = parser.GetArgument(name) as RelationSymbol;
     }
-    const num2 = Util.numexpr(parser.GetArgument(name));
+    const num2 = Util.EvalNumberExpr(parser, name);
     const relation = relations[relationSym];
     if (!relation) {
       throw new TexError(
@@ -299,7 +313,7 @@ const EtoolboxMethods = {
    * @param {0 | 1} parity 0 for even, 1 for odd.
    */
   IfNumParity(parser: TexParser, name: string, parity: 0 | 1) {
-    const num = Util.numexpr(parser.GetArgument(name));
+    const num = Util.EvalNumberExpr(parser, name);
     Util.PushConditionsBranch(parser, name, num % 2 === parity);
   },
 

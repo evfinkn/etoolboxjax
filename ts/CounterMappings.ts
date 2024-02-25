@@ -18,6 +18,7 @@ const commands: CommandMapRecord<typeof CounterMethods> = {
   fnsymbol: ["Format", "toFnSymbol"],
   counterwithin: "CounterWithin",
   counterwithout: "CounterWithout",
+  value: "Value",
   number: "Number",
   romannumeral: "RomanNumeral",
 };

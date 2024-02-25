@@ -1,9 +1,10 @@
 {
-  "name": "counterjax",
+  "name": "etoolboxjax",
   "type": "module",
   "scripts": {
+    "dev": "nodemon -w ts -e ts -x \"pnpm build\"",
     "prepare": "husky install",
-    "build": "npx tsc; ./node_modules/mathjax-full/components/bin/makeAll components"
+    "build": "npx tsc; ./node_modules/mathjax-full/components/bin/makeAll components/etoolbox; ./node_modules/mathjax-full/components/bin/makeAll components/counter"
   },
   "dependencies": {
     "@babel/core": "^7.23.6",
