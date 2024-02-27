@@ -45,21 +45,20 @@ MathJax = {
 
 A simple example of how to use counters for section numbering is shown below.
 
+<!-- prettier-ignore -->
 ```html
-<span style="display: hidden;"
-  >\[ \newcounter{section} \newcounter{subsection}
+<span style="display: hidden;">\[
+  \newcounter{section} \newcounter{subsection}
   \counterwithin{subsection}{section} % Reset subsection counter at each section
   \newcommand{\section}{\stepcounter{section} \thesection}
-  \newcommand{\subsection}{\stepcounter{subsection} \thesubsection} \]</span
->
-<h1>Section \(\section\)</h1>
-<!-- Section 1 -->
-<h2>Subsection \(\subsection\)</h2>
-<!-- Subsection 1.1 -->
-<h2>Subsection \(\subsection\)</h2>
-<!-- Subsection 1.2 -->
-<h1>Section \(\section\)</h1>
-<!-- Section 2 -->
+  \newcommand{\subsection}{\stepcounter{subsection} \thesubsection}
+\]</span>
+
+<h1>Section \(\section\)</h1> <!-- Section 1 -->
+<h2>Subsection \(\subsection\)</h2> <!-- Subsection 1.1 -->
+<h2>Subsection \(\subsection\)</h2> <!-- Subsection 1.2 -->
+
+<h1>Section \(\section\)</h1> <!-- Section 2 -->
 <!-- ... -->
 ```
 
