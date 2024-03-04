@@ -274,7 +274,7 @@ export function GetNumberExpr(parser: TexParser, name: string): string {
   }
   // Increment so that parser.i is at the index right after the closing brace
   // (where GetArgument leaves it).
-  parser.i++;
+  parser.i = stopI + 1;
   return replaced.join("");
 }
 
