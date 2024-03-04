@@ -30,10 +30,9 @@ export const Flag = {
     const key = `${type}-${name}`;
     if (flags[key] !== undefined) {
       if (errorIfDefined) {
-        const capType = type[0].toUpperCase() + type.slice(1);
         throw new TexError(
           "DuplicateFlag",
-          `${capType} "${name}" already defined`,
+          `${type} "${name}" already defined`,
         );
       }
       return;
