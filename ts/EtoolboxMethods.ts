@@ -348,7 +348,7 @@ const EtoolboxMethods = {
   ListAdd(parser: TexParser, name: string) {
     const list = Util.GetList(parser, name);
     const item = parser.GetArgument(name);
-    if (item !== "") list.push(item);
+    if (item !== "") list.push(item); // etoolbox ignores empty items
   },
 
   ListRemove(parser: TexParser, name: string) {
