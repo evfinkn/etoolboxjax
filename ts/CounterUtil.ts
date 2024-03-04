@@ -191,8 +191,8 @@ function isNumberItem(item?: StackItem): boolean {
  * Parses a command and returns the number it represents.
  *
  * This function calls the command's parse method and passes `parser` for its `parser`
- * argument. The command's parse method should return a StackItem of kind "number"
- * with a numeric property "number". That number is returned.
+ * argument. The command's parse method should push an `MmlNode` of kind "mn" to
+ * `parser`'s stack.
  *
  * If `cs` is given, `parser.i` should be set to the index right after `cs` in
  * `parser.string` before calling this function. If `cs` is not given, the next command
@@ -205,12 +205,11 @@ function isNumberItem(item?: StackItem): boolean {
  * @param {TexParser} parser The calling parser.
  * @param {string} name The name of the calling command.
  * @param {string} [cs] The control sequence of the command to parse. If not
- *   given, the next command in the parser's string is parsed.
+ *   given, it is parsed from `parser`.
  * @returns {number} The number represented by the command.
- * @throws {TexError} If `cs` is given and is blank (empty or whitespace only).
- * @throws {TexError} If `cs` isn't given and no control sequence can be parsed.
- * @throws {TexError} If the command does not return a StackItem of kind "number" or
- *  if the command does not have a "number" property of type number.
+ * @throws {TexError} If `cs` is blank (empty or whitespace only).
+ * @throws {TexError} If `cs` is an undefined macro.
+ * @throws {TexError} If the command's result is not a number.
  */
 export function GetNumberFromCS(
   parser: TexParser,
@@ -230,17 +229,34 @@ export function GetNumberFromCS(
   }
 
   const handler = parser.configuration.handlers.get("macro");
-  const result = handler.parse([parser, cs]) as StackItem;
-  console.log("result", result);
-  if (result === undefined || result === null) {
+  const tokenMap = handler.applicable(cs);
+  if (!tokenMap) {
     throw new TexError("UndefinedMacro", `Undefined macro "${cs}"`);
   }
 
-  if (!isNumberItem(result)) {
+  const oldTop = parser.stack.Top();
+  const oldFirst = oldTop.First;
+  tokenMap.parse([parser, cs]);
+  const newTop = parser.stack.Top();
+  const newFirst = newTop.First;
+
+  let number: number | null = null;
+  if (oldTop !== newTop && typeof newTop.getProperty("number") === "number") {
+    number = newTop.getProperty("number") as number;
+    // Remove the output of the command since it was only used to get the number.
+    parser.stack.Pop();
+  } else if (newFirst !== oldFirst && newFirst.isKind("mn")) {
+    // The text property doesn't officially exist, but it's there in the browser.
+    // @ts-ignore - Property 'text' does not exist on type 'MmlNode'.
+    number = Number(newFirst.childNodes[0].text);
+    // Remove the output of the command since it was only used to get the number.
+    if (oldTop !== newTop) parser.stack.Pop();
+    else newTop.Pop();
+  } else {
     throw new TexError("InvalidNumber", `Invalid number "${cs}"`);
   }
 
-  return result.getProperty("number") as number;
+  return number;
 }
 
 export function GetNumberExpr(parser: TexParser, name: string): string {
