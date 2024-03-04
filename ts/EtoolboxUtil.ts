@@ -3,6 +3,8 @@ import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 
+import { GetCsNameArgument } from "./CounterUtil.js";
+
 export * from "./Util.js";
 
 export const ETOOLBOX_CMD_MAP = "etoolbox-commands";
@@ -63,7 +65,7 @@ export const List = {
 };
 
 export function GetList(parser: TexParser, name: string): string[] {
-  const listName = parser.GetArgument(name);
+  const listName = GetCsNameArgument(parser, name);
   return List.get(listName);
 }
 
