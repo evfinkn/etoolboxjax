@@ -59,7 +59,7 @@ const EtoolboxMethods = {
    */
   NumExpr(parser: TexParser, name: string) {
     const number = Util.EvalNumberExpr(parser, name);
-    return parser.itemFactory.create("number").setProperties({ number });
+    parser.Push(parser.itemFactory.create("number", number));
   },
 
   /**
@@ -337,7 +337,7 @@ const EtoolboxMethods = {
     handler ??= parser.GetArgument(name);
     const listString = parser.GetArgument(name);
     const list = Util.separateList(listString, separator);
-    return expandLoop(parser, startI, list, handler);
+    parser.Push(expandLoop(parser, startI, list, handler));
   },
 
   NewList(parser: TexParser, name: string) {
@@ -362,7 +362,7 @@ const EtoolboxMethods = {
     const startI = parser.i - name.length;
     handler ??= parser.GetArgument(name);
     const list = Util.GetList(parser, name);
-    return expandLoop(parser, startI, list, handler);
+    parser.Push(expandLoop(parser, startI, list, handler));
   },
 
   LoopBreak(parser: TexParser, name: string) {
@@ -373,8 +373,7 @@ const EtoolboxMethods = {
         "\\loopbreak must be inside a loop",
       );
     }
-    parser.i = top.getProperty("stopI") as number;
-    return parser.itemFactory.create("loopBreak");
+    parser.Push(parser.itemFactory.create("loopBreak"));
   },
 
   IfInList(parser: TexParser, name: string) {
