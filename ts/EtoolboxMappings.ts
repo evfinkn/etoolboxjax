@@ -71,6 +71,7 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   listremove: "ListRemove",
   dolistloop: ["ListLoop", "\\do"],
   forlistloop: "ListLoop",
+  loopbreak: "LoopBreak",
   // List tests
   ifinlist: "IfInList",
   // Misc
