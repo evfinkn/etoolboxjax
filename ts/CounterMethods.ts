@@ -125,7 +125,7 @@ const CounterMethods = {
   Value(parser: TexParser, name: string) {
     const counter = Util.GetCounter(parser, name);
     const number = counter.value;
-    return parser.itemFactory.create("number").setProperties({ number });
+    parser.Push(parser.itemFactory.create("number", number));
   },
 
   RomanNumeral(parser: TexParser, name: string) {
