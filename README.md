@@ -64,8 +64,7 @@ A simple example of how to use counters for section numbering is shown below.
 
 For a more in-depth example of counter usage, see [here](./demo.html).
 
-An example of using the `etoolbox` package is shown below. (Note that this extension
-is still in development and currently being refactored, so the example won't work yet.)
+An example of using the `etoolbox` package is shown below.
 
 ```latex
 \newcounter{sum}
