@@ -160,21 +160,12 @@ export function GetCounter(parser: TexParser, name: string): Counter {
 }
 
 export function GetNumber(parser: TexParser, name: string): number {
-  console.log("GetNumber");
-  console.log(`parser.i = ${parser.i}`);
-  console.log(
-    `parser.string.slice(parser.i) = ${parser.string.slice(parser.i)}`,
-  );
   let startI = parser.i; // Start index of the argument.
   if (parser.GetNext() === "{") startI++; // Don't include the opening brace.
-  console.log(`startI = ${startI}`);
   const arg = parser.GetArgument(name);
-  console.log(`arg = ${arg}`);
   const stopI = parser.i;
-  console.log(`parser.i = stopI = ${stopI}`);
 
   const num = Number(arg);
-  console.log(`num = ${num}`);
   if (Number.isFinite(num)) return num;
 
   parser.i = startI;
@@ -226,7 +217,6 @@ export function GetNumberFromCS(
   name: string,
   cs?: string,
 ): number {
-  console.log("GetNumberFromCS");
   if (!cs) {
     if (parser.GetNext() === "\\") parser.i++;
     cs = parser.GetCS();
@@ -234,15 +224,10 @@ export function GetNumberFromCS(
     cs = cs.substring(1);
   }
   cs = cs.trim();
-  console.log(`cs = ${cs}`);
 
   if (cs === "") {
     throw new TexError("MissingNumber", `Missing number for "${name}"`);
   }
-
-  // const result = new TexParser(
-  //   command, parser.stack.env, parser.configuration,
-  // ).stack.Top();
 
   const handler = parser.configuration.handlers.get("macro");
   const result = handler.parse([parser, cs]) as StackItem;
