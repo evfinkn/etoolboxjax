@@ -34,17 +34,16 @@ function expandLoop(
   handler: string,
 ): StackItem {
   const handledList = list.map((e) => `${handler}{${e}}`);
-  const expanded = `${handledList.join("")}\\loopbreak`;
-  // parser.string = ParseUtil.addArgs(
-  //   parser,
-  //   expanded,
-  //   parser.string.slice(parser.i),
-  // );
+  const expanded = `${handledList.join("")}\\loopbreak\\loopend`;
   Util.replaceParserSlice(parser, startI, parser.i, expanded);
-  const stopI = startI + expanded.length;
-  parser.i = startI;
+  parser.i = startI; // index of the first character after the open brace
 
-  return parser.itemFactory.create("loop").setProperties({ startI, stopI });
+  // The old way stored stopI in the loop item, which LoopBreak would use to set
+  // parser.i. However, this doesn't work because the handler in the loop is likely
+  // to be expanded (since it's usually a macro), which changes the value of parser.i.
+  // Instead, we add \\loopend at the end of the expanded loop and skip to it
+  // in LoopBreak.
+  return parser.itemFactory.create("loop");
 }
 
 const EtoolboxMethods = {
@@ -373,6 +372,9 @@ const EtoolboxMethods = {
         "\\loopbreak must be inside a loop",
       );
     }
+    // Skip to the end of the loop. This leaves parser.i at the character after loopend
+    parser.GetUpTo(name, "\\loopend");
+    // The loopBreak causes the loop to get popped from the stack, pushing its children
     parser.Push(parser.itemFactory.create("loopBreak"));
   },
 
