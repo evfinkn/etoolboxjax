@@ -58,12 +58,14 @@
     <!-- prettier-ignore -->
     <span class="hidden">
       \[
-        \newcounter{section} \newcounter{subsection}
+        \newcounter{section} \newcounter{subsection} % counters start at 0
+        % Reset subsection (set it to 0) whenever section is stepped
         \counterwithin{subsection}{section}
+        \newcommand{\section}{\stepcounter{section} \thesection}
+        \newcommand{\subsection}{\stepcounter{subsection} \thesubsection}
       \]
     </span>
-    <span class="hidden">\[\stepcounter{section}\]</span>
-    <h2>\(\thesection\) Union</h2>
+    <h2>\(\section\) Union</h2>
     <p>
       The <i>union</i> (denoted by \(\cup\)) of a collection of sets is the set
       of all elements in the collection. For example, if \(A\) and \(B\) are
@@ -78,15 +80,13 @@
       </span>
     </p>
   </body>
-  <span class="hidden">\[\stepcounter{subsection}\]</span>
-  <h3>\(\thesubsection\) Notation</h3>
+  <h3>\(\subsection\) Notation</h3>
   <p>
     For a union of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can use the
     notation \(\bigcup_{i=1}^{n} S_{i}\) instead of \(S_{1} \cup S_{2} \cup
     S_{3} \cup \dots \cup S_{n}\).
   </p>
-  <span class="hidden">\[\stepcounter{subsection}\]</span>
-  <h3>\(\thesubsection\) Properties</h3>
+  <h3>\(\subsection\) Properties</h3>
   <p>
     The union operation is commutative, associative, and idempotent. That is,
     for any sets \(A\), \(B\), and \(C\):
@@ -101,8 +101,7 @@
       \]
     </span>
   </p>
-  <span class="hidden">\[\stepcounter{section}\]</span>
-  <h2>\(\thesection\) Intersection</h2>
+  <h2>\(\section\) Intersection</h2>
   <p>
     The <i>intersection</i> (denoted by \(\cap\)) of a collection of sets is the
     set containing every element \(x\) where \(x\) belongs to every set in the
@@ -116,15 +115,13 @@
       \]
     </span>
   </p>
-  <span class="hidden">\[\stepcounter{subsection}\]</span>
-  <h3>\(\thesubsection\) Notation</h3>
+  <h3>\(\subsection\) Notation</h3>
   <p>
     For an intersection of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can
     use the notation \(\bigcap_{i=1}^{n} S_{i}\) instead of \(S_{1} \cap S_{2}
     \cap S_{3} \cap \dots \cap S_{n}\).
   </p>
-  <span class="hidden">\[\stepcounter{subsection}\]</span>
-  <h3>\(\thesubsection\) Properties</h3>
+  <h3>\(\subsection\) Properties</h3>
   <p>
     The intersection operator is commutative, associative, and idempotent. That
     is, for any sets \(A\), \(B\), and \(C\):
