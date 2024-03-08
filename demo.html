@@ -53,87 +53,81 @@
       }
     </style>
   </head>
+
   <body>
     <h1>Set Operations</h1>
+
     <!-- prettier-ignore -->
-    <span class="hidden">
-      \[
-        \newcounter{section} \newcounter{subsection} % counters start at 0
-        % Reset subsection (set it to 0) whenever section is stepped
-        \counterwithin{subsection}{section}
-        \newcommand{\section}{\stepcounter{section} \thesection}
-        \newcommand{\subsection}{\stepcounter{subsection} \thesubsection}
-      \]
-    </span>
+    <span class="hidden">\[
+      \newcounter{section} \newcounter{subsection} % counters start at 0
+      % Reset subsection (set it to 0) whenever section is stepped
+      \counterwithin{subsection}{section}
+      \newcommand{\section}{\stepcounter{section} \thesection}
+      \newcommand{\subsection}{\stepcounter{subsection} \thesubsection}
+    \]</span>
+
     <h2>\(\section\) Union</h2>
+    <!-- prettier-ignore -->
     <p>
       The <i>union</i> (denoted by \(\cup\)) of a collection of sets is the set
       of all elements in the collection. For example, if \(A\) and \(B\) are
       sets, their union is
-      <!-- prettier-ignore -->
-      <span>
-        \[
-          \begin{equation}
-            A \cup B = \{ x \mid x \in A \text{ or } x \in B \} \,.
-          \end{equation}
-        \]
-      </span>
+
+        \begin{equation}
+          A \cup B = \{ x \mid x \in A \text{ or } x \in B \} \,.
+        \end{equation}
     </p>
-  </body>
-  <h3>\(\subsection\) Notation</h3>
-  <p>
-    For a union of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can use the
-    notation \(\bigcup_{i=1}^{n} S_{i}\) instead of \(S_{1} \cup S_{2} \cup
-    S_{3} \cup \dots \cup S_{n}\).
-  </p>
-  <h3>\(\subsection\) Properties</h3>
-  <p>
-    The union operation is commutative, associative, and idempotent. That is,
-    for any sets \(A\), \(B\), and \(C\):
+
+    <h3>\(\subsection\) Notation</h3>
+    <p>
+      For a union of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can use the
+      notation \(\bigcup_{i=1}^{n} S_{i}\) instead of \(S_{1} \cup S_{2} \cup
+      S_{3} \cup \dots \cup S_{n}\).
+    </p>
+
+    <h3>\(\subsection\) Properties</h3>
     <!-- prettier-ignore -->
-    <span>
-      \[
+    <p>
+      The union operation is commutative, associative, and idempotent. That is,
+      for any sets \(A\), \(B\), and \(C\):
+
         \begin{align}
           A \cup B &= B \cup A \\
           A \cup (B \cup C) &= (A \cup B) \cup C \\
           A \cup A &= A
         \end{align}
-      \]
-    </span>
-  </p>
-  <h2>\(\section\) Intersection</h2>
-  <p>
-    The <i>intersection</i> (denoted by \(\cap\)) of a collection of sets is the
-    set containing every element \(x\) where \(x\) belongs to every set in the
-    collection. For example, if \(A\) and \(B\) are sets, their intersection is
+    </p>
+
+    <h2>\(\section\) Intersection</h2>
     <!-- prettier-ignore -->
-    <span>
-      \[
+    <p>
+      The <i>intersection</i> (denoted by \(\cap\)) of a collection of sets is the
+      set containing every element \(x\) where \(x\) belongs to every set in the
+      collection. For example, if \(A\) and \(B\) are sets, their intersection is
+    
         \begin{equation}
           A \cap B = \{ x \mid x \in A \text{ and } x \in B \} \,.
         \end{equation}
-      \]
-    </span>
-  </p>
-  <h3>\(\subsection\) Notation</h3>
-  <p>
-    For an intersection of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can
-    use the notation \(\bigcap_{i=1}^{n} S_{i}\) instead of \(S_{1} \cap S_{2}
-    \cap S_{3} \cap \dots \cap S_{n}\).
-  </p>
-  <h3>\(\subsection\) Properties</h3>
-  <p>
-    The intersection operator is commutative, associative, and idempotent. That
-    is, for any sets \(A\), \(B\), and \(C\):
+    </p>
+
+    <h3>\(\subsection\) Notation</h3>
+    <p>
+      For an intersection of sets \(S_{1}, S_{2}, S_{3}, \dots, S_{n}\) one can
+      use the notation \(\bigcap_{i=1}^{n} S_{i}\) instead of \(S_{1} \cap S_{2}
+      \cap S_{3} \cap \dots \cap S_{n}\).
+    </p>
+
+    <h3>\(\subsection\) Properties</h3>
     <!-- prettier-ignore -->
-    <span>
-      \[
+    <p>
+      The intersection operator is commutative, associative, and idempotent. That
+      is, for any sets \(A\), \(B\), and \(C\):
+
         \begin{align}
           A \cap B &= B \cap A \\
           A \cap (B \cap C) &= (A \cap B) \cap C \\
           A \cap A &= A
         \end{align}
-      \]
-    </span>
-  </p>
+    </p>
+  </body>
 </html>
