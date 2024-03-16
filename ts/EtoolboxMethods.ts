@@ -152,9 +152,10 @@ const EtoolboxMethods = {
    * @param {boolean} negate Whether to negate the result.
    */
   IfFlag(parser: TexParser, name: string, type: string, negate: boolean) {
+    const startI = parser.i - name.length;
     const cs = Util.GetCsNameArgument(parser, name);
     const bool = Flag.get(type, cs);
-    Util.PushConditionsBranch(parser, name, bool, negate);
+    Util.ExpandConditionsBranch(parser, name, startI, bool, negate);
   },
 
   /**
@@ -171,12 +172,13 @@ const EtoolboxMethods = {
    * @param {boolean} negate Whether to negate the result.
    */
   IfDef(parser: TexParser, name: string, negate: boolean) {
+    const startI = parser.i - name.length;
     const cs = Util.GetCsNameArgument(parser, name);
     const handlers = handlerTypes.map((type) =>
       parser.configuration.handlers.get(type),
     );
     const isDefined = handlers.some((handler) => handler.contains(cs));
-    Util.PushConditionsBranch(parser, name, isDefined, negate);
+    Util.ExpandConditionsBranch(parser, name, startI, isDefined, negate);
   },
 
   /**
@@ -198,6 +200,7 @@ const EtoolboxMethods = {
    *   take any number of parameters.
    */
   IfDefMacro(parser: TexParser, name: string, withParams?: boolean) {
+    const startI = parser.i - name.length;
     const cs = Util.GetCsNameArgument(parser, name);
     const handlers = parser.configuration.handlers;
     const newCommands = handlers.retrieve("new-Command") as CommandMap;
@@ -206,7 +209,7 @@ const EtoolboxMethods = {
     const condition =
       macro &&
       (withParams === undefined || withParams === !!(macro.func.length - 2));
-    Util.PushConditionsBranch(parser, name, condition);
+    Util.ExpandConditionsBranch(parser, name, startI, condition);
   },
 
   /**
@@ -226,9 +229,10 @@ const EtoolboxMethods = {
    * @param {string} name The name of the calling command.
    */
   IfDefCounter(parser: TexParser, name: string) {
+    const startI = parser.i - name.length;
     const cs = Util.GetCsNameArgument(parser, name);
     const counter = Util.Counter.get(cs, false);
-    Util.PushConditionsBranch(parser, name, !!counter);
+    Util.ExpandConditionsBranch(parser, name, startI, !!counter);
   },
 
   /**
@@ -241,9 +245,10 @@ const EtoolboxMethods = {
    * @param {string} name The name of the calling command.
    */
   IfStrEqual(parser: TexParser, name: string) {
+    const startI = parser.i - name.length;
     const str1 = parser.GetArgument(name);
     const str2 = parser.GetArgument(name);
-    Util.PushConditionsBranch(parser, name, str1 === str2);
+    Util.ExpandConditionsBranch(parser, name, startI, str1 === str2);
   },
 
   /**
@@ -261,10 +266,11 @@ const EtoolboxMethods = {
    * @param {boolean} negate Whether to negate the result.
    */
   IfBlank(parser: TexParser, name: string, trim: boolean, negate: boolean) {
+    const startI = parser.i - name.length;
     let str = parser.GetArgument(name);
     if (trim) str = str.trim();
 
-    Util.PushConditionsBranch(parser, name, str === "", negate);
+    Util.ExpandConditionsBranch(parser, name, startI, str === "", negate);
   },
 
   /**
@@ -286,6 +292,7 @@ const EtoolboxMethods = {
    *   parsed from the TeX input.
    */
   IfNumComp(parser: TexParser, name: string, relationSym?: RelationSymbol) {
+    const startI = parser.i - name.length;
     const num1 = Util.EvalNumberExpr(parser, name);
     if (!relationSym) {
       relationSym = parser.GetArgument(name) as RelationSymbol;
@@ -299,7 +306,7 @@ const EtoolboxMethods = {
         relationSym,
       );
     }
-    Util.PushConditionsBranch(parser, name, relation(num1, num2));
+    Util.ExpandConditionsBranch(parser, name, startI, relation(num1, num2));
   },
 
   /**
@@ -312,8 +319,9 @@ const EtoolboxMethods = {
    * @param {0 | 1} parity 0 for even, 1 for odd.
    */
   IfNumParity(parser: TexParser, name: string, parity: 0 | 1) {
+    const startI = parser.i - name.length;
     const num = Util.EvalNumberExpr(parser, name);
-    Util.PushConditionsBranch(parser, name, num % 2 === parity);
+    Util.ExpandConditionsBranch(parser, name, startI, num % 2 === parity);
   },
 
   DeclareListParser(parser: TexParser, name: string) {
@@ -379,14 +387,16 @@ const EtoolboxMethods = {
   },
 
   IfInList(parser: TexParser, name: string) {
+    const startI = parser.i - name.length;
     const item = parser.GetArgument(name);
     const list = Util.GetList(parser, name);
-    Util.PushConditionsBranch(parser, name, list.includes(item));
+    Util.ExpandConditionsBranch(parser, name, startI, list.includes(item));
   },
 
   IfRomanNumeral(parser: TexParser, name: string) {
+    const startI = parser.i - name.length;
     const str = parser.GetArgument(name);
-    Util.PushConditionsBranch(parser, name, Util.isRomanNumeral(str));
+    Util.ExpandConditionsBranch(parser, name, startI, Util.isRomanNumeral(str));
   },
 } satisfies Record<string, ParseMethod>;
 

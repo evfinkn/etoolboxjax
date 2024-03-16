@@ -1,9 +1,9 @@
-import type { MmlNode } from "mathjax-full/js/core/MmlTree/MmlNode.js";
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 
 import { GetCsNameArgument } from "./CounterUtil.js";
+import { replaceParserSlice } from "./Util.js";
 
 export * from "./Util.js";
 
@@ -69,30 +69,19 @@ export function GetList(parser: TexParser, name: string): string[] {
   return List.get(listName);
 }
 
-export function ParseConditionsBranch(
+export function ExpandConditionsBranch(
   parser: TexParser,
   name: string,
+  startI: number,
   condition: boolean,
   negate: boolean = false,
-): MmlNode {
-  if (negate) condition = !condition;
-  let branch: MmlNode;
-  // GetArgument is used instead of ParseArg for the skipped branch so that
-  // commands that cause side effects (like \newcommand) aren't executed
-  if (condition) {
-    branch = parser.ParseArg(name);
-    parser.GetArgument(name); // Skip the false branch
-  } else {
-    parser.GetArgument(name); // Skip the true branch
-    branch = parser.ParseArg(name);
-  }
-  return branch;
-}
-
-export function PushConditionsBranch(
-  ...args: Parameters<typeof ParseConditionsBranch>
 ): void {
-  args[0].Push(ParseConditionsBranch(...args));
+  if (negate) condition = !condition;
+  const trueBranch = parser.GetArgument(name);
+  const falseBranch = parser.GetArgument(name);
+  const branch = condition ? trueBranch : falseBranch;
+  replaceParserSlice(parser, startI, parser.i, branch);
+  parser.i = startI;
 }
 
 /**
