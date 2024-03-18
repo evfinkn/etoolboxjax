@@ -241,6 +241,41 @@ const EtoolboxMethods = {
   },
 
   /**
+   * Handles `\ifdefstring`, `\ifcsstring`, `\ifdefstrequal`, and `\ifcsstrequal`.
+   *
+   * The first two are called with arguments `{<macro>}{<string>}{<true>}{<false>}`.
+   * If `<macro>` is defined and expands to `<string>`, the command expands to `<true>`
+   * and otherwise expands to `<false>`. The last two are called with arguments
+   * `{<macro>}{<macro>}{<true>}{<false>}`. If the two macros expand to the same
+   * string, the command expands to `<true>` and otherwise expands to `<false>`.
+   *
+   * `\ifcsstring` and `\ifcsstrequal` are aliases for `\ifdefstring` and
+   * `\ifdefstrequal`, respectively.
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   * @param {boolean} [bothMacros=false] Whether to compare two macros rather than a
+   *   macro and a string.
+   */
+  IfDefString(parser: TexParser, name: string, bothMacros: boolean = false) {
+    const startI = parser.i - name.length;
+    const cs1 = Util.GetCsNameArgument(parser, name);
+    const macro1 = Util.getMacro(parser, cs1);
+
+    let condition;
+    if (!macro1) {
+      condition = false;
+    } else if (bothMacros) {
+      const cs2 = Util.GetCsNameArgument(parser, name);
+      const macro2 = Util.getMacro(parser, cs2);
+      condition = macro1.args[0] === macro2?.args[0];
+    } else {
+      condition = macro1.args[0] === parser.GetArgument(name);
+    }
+    Util.ExpandConditionsBranch(parser, name, startI, condition);
+  },
+
+  /**
    * Handles `\ifdefcounter`, `\ifcscounter`, and `\ifltxcounter`.
    *
    * Each command is called with arguments `{<counter>}{<true>}{<false>}`. If
