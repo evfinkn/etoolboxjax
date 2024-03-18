@@ -40,6 +40,11 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   ifcsmacro: "IfDefMacro",
   ifdefparam: ["IfDefMacro", true],
   ifcsparam: ["IfDefMacro", true],
+  // IfDefEmpty takes orVoid argument
+  ifdefempty: "IfDefEmpty",
+  ifcsempty: "IfDefEmpty",
+  ifdefvoid: ["IfDefEmpty", true],
+  ifcsvoid: ["IfDefEmpty", true],
   // Counter tests
   // TODO: we don't have \newcount so these all test \newcounter
   ifdefcounter: "IfDefCounter",

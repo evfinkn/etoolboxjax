@@ -1,6 +1,8 @@
 import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 
 import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
+import { Macro } from "mathjax-full/js/input/tex/Token.js";
+import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 export type NonParseParams<F> = F extends (
   parser: TexParser,
@@ -31,4 +33,16 @@ export function replaceParserSlice(
   parser.string = ParseUtil.addArgs(parser, string, right);
 
   ParseUtil.checkMaxMacros(parser);
+}
+
+/**
+ * Gets the macro associated with a control sequence.
+ * @param parser The current parser.
+ * @param cs The control sequence to lookup.
+ * @return The macro associated with the control sequence, or `undefined` if not found.
+ */
+export function getMacro(parser: TexParser, cs: string): Macro | undefined {
+  const handlers = parser.configuration.handlers;
+  const newCommands = handlers.retrieve("new-Command") as CommandMap;
+  return newCommands.lookup(cs);
 }

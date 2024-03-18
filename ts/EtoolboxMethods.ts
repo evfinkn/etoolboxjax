@@ -202,14 +202,42 @@ const EtoolboxMethods = {
   IfDefMacro(parser: TexParser, name: string, withParams?: boolean) {
     const startI = parser.i - name.length;
     const cs = Util.GetCsNameArgument(parser, name);
-    const handlers = parser.configuration.handlers;
-    const newCommands = handlers.retrieve("new-Command") as CommandMap;
-    const macro = newCommands.lookup(cs);
+    const macro = Util.getMacro(parser, cs);
     // macro.func.length - 2 because first two arguments are parser and name
     const condition =
       macro &&
       (withParams === undefined || withParams === !!(macro.func.length - 2));
     Util.ExpandConditionsBranch(parser, name, startI, condition);
+  },
+
+  /**
+   * Handles `\ifdefempty`, `\ifcsempty`, `\ifdefvoid`, and `\ifcsvoid`.
+   *
+   * Each command is called with arguments `{<macro>}{<true>}{<false>}`. If `<macro>`
+   * is defined, takes no arguments, and expands to nothing, the command expands to
+   * `<true>`. `\ifdefvoid` and `\ifcsvoid` also expand to `<true>` if `<macro>` is
+   * undefined.
+   *
+   * `\ifcsempty` and `\ifcsvoid` are aliases for `\ifdefempty` and `\ifdefvoid`,
+   * respectively. See the documentation for EtoolboxMappings.EtoolboxCommandMap.
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   * @param {boolean} [orVoid=false] Whether to expand to `<true>` if `<macro>` is
+   *   undefined.
+   */
+  IfDefEmpty(parser: TexParser, name: string, orVoid: boolean = false) {
+    const startI = parser.i - name.length;
+    const cs = Util.GetCsNameArgument(parser, name);
+    const macro = Util.getMacro(parser, cs);
+    // The first argument of a macro is the string the macro expands to.
+    // See the source code for NewCommand in NewcommandMethods.ts and for Macro
+    // in BaseMethods.ts (line 1837 at time of writing)
+    const macroString = macro?.args?.[0] as string;
+    const condition =
+      (!macro && orVoid) ||
+      (macro.func.length === 2 && macroString.trim() === "");
+    Util.ExpandConditionsBranch(parser, name, startI, condition, orVoid);
   },
 
   /**
