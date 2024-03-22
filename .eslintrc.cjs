@@ -1,5 +1,6 @@
 module.exports = {
-  ignorePatterns: ["**/*", "!ts/**/*"],
+  // ts has to be unignored before its contents can be unignored
+  ignorePatterns: ["**/*", "!ts", "!ts/**/*"],
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended-type-checked",
