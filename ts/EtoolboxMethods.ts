@@ -461,6 +461,49 @@ const EtoolboxMethods = {
     const str = parser.GetArgument(name);
     Util.ExpandConditionsBranch(parser, name, startI, Util.isRomanNumeral(str));
   },
+
+  /**
+   * Handles `\strlength{<string>}`.
+   *
+   * This expands to the length of `<string>` (the number of characters in it). Note
+   * that it simply uses the JavaScript `length` property, so it doesn't account for
+   * Unicode characters that are represented by multiple code units. For example,
+   * `\strlength{😶‍🌫️}` expands to 6.
+   */
+  StrLength(parser: TexParser, name: string) {
+    const str = parser.GetArgument(name);
+    parser.Push(parser.itemFactory.create("number", str.length));
+  },
+
+  /**
+   * Handles `\macrolength{<macro>}`.
+   *
+   * This expands to the length of the expansion of `<macro>` (the number of characters
+   * in the macro's expansion). No arguments should be given to `<macro>`. If `<macro>`
+   * is undefined, an error is thrown.
+   *
+   * As an example, consider the following:
+   * ```
+   * \newcommand{\myMacro}{abc}
+   * \macrolength{\myMacro} % expands to 3
+   *
+   * \newcommand[2]{\myMacroTwo}{#1#2}
+   * \macrolength{\myMacroTwo} % expands to 4
+   * ```
+   *
+   * @param {TexParser} parser The calling parser.
+   * @param {string} name The name of the calling command.
+   * @throws {TexError} If `<macro>` is undefined.
+   */
+  MacroLength(parser: TexParser, name: string) {
+    const cs = Util.GetCsNameArgument(parser, name);
+    const macro = Util.getMacro(parser, cs);
+    if (!macro) {
+      throw new TexError("UndefinedMacro", `Macro "${cs}" is undefined`);
+    }
+    const expansion = macro.args[0] as string;
+    parser.Push(parser.itemFactory.create("number", expansion.length));
+  },
 } satisfies Record<string, ParseMethod>;
 
 export default EtoolboxMethods;

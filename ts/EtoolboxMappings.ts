@@ -86,6 +86,8 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   ifinlist: "IfInList",
   // Misc
   ifrmnum: "IfRomanNumeral",
+  strlength: "StrLength",
+  macrolength: "MacroLength",
 };
 
 /**
