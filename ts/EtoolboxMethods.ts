@@ -219,7 +219,7 @@ const EtoolboxMethods = {
    * undefined.
    *
    * `\ifcsempty` and `\ifcsvoid` are aliases for `\ifdefempty` and `\ifdefvoid`,
-   * respectively. See the documentation for EtoolboxMappings.EtoolboxCommandMap.
+   * respectively.
    *
    * @param {TexParser} parser The calling parser.
    * @param {string} name The name of the calling command.
