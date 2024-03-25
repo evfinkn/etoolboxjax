@@ -3,26 +3,26 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon -w ts -e ts -x \"pnpm build\"",
-    "prepare": "husky install",
+    "prepare": "husky",
     "build": "npx tsc; ./node_modules/mathjax-full/components/bin/makeAll components/etoolbox; ./node_modules/mathjax-full/components/bin/makeAll components/counter"
   },
   "dependencies": {
-    "@babel/core": "^7.23.6",
-    "@babel/preset-env": "^7.23.6",
+    "@babel/core": "^7.24.3",
+    "@babel/preset-env": "^7.24.3",
     "babel-loader": "^9.1.3",
     "mathjax-full": "^4.0.0-beta.4",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.3"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "eslint": "^8.55.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
-    "prettier": "3.1.1",
-    "webpack": "^5.89.0",
+    "globals": "^14.0.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "3.2.5",
+    "typescript-eslint": "^7.4.0",
+    "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4"
   }
 }
