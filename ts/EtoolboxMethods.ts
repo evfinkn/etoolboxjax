@@ -4,7 +4,6 @@ import type TexParser from "mathjax-full/js/input/tex/TexParser.js";
 import type { ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 import TexError from "mathjax-full/js/input/tex/TexError.js";
-import { CommandMap } from "mathjax-full/js/input/tex/TokenMap.js";
 
 import * as Util from "./EtoolboxUtil.js";
 import { Flag, LIST_PARSER_MAP } from "./EtoolboxUtil.js";
@@ -30,13 +29,12 @@ const relations: Record<RelationSymbol, (a: number, b: number) => boolean> = {
 function expandLoop(
   parser: TexParser,
   startI: number,
-  list: string[],
-  handler: string,
+  code: string | string[],
 ): StackItem {
-  const handledList = list.map((e) => `${handler}{${e}}`);
-  const expanded = `${handledList.join("")}\\loopbreak\\loopend`;
+  if (typeof code !== "string") code = code.join("");
+  const expanded = `${code}\\loopbreak\\loopend`;
   Util.replaceParserSlice(parser, startI, parser.i, expanded);
-  parser.i = startI; // index of the first character after the open brace
+  parser.i = startI;
 
   // The old way stored stopI in the loop item, which LoopBreak would use to set
   // parser.i. However, this doesn't work because the handler in the loop is likely
@@ -44,6 +42,35 @@ function expandLoop(
   // Instead, we add \\loopend at the end of the expanded loop and skip to it
   // in LoopBreak.
   return parser.itemFactory.create("loop");
+}
+
+function expandListLoop(
+  parser: TexParser,
+  startI: number,
+  list: string[],
+  handler: string,
+): ReturnType<typeof expandLoop> {
+  const handledList = list.map((e) => `${handler}{${e}}`);
+  return expandLoop(parser, startI, handledList);
+}
+
+function expandWhileLoop(
+  parser: TexParser,
+  startI: number,
+  code: string,
+  conditional: string,
+): ReturnType<typeof expandLoop> {
+  // I considered implementing this by inserting `code` in the string once and using a
+  // command to jump back to the start of `code` at the end of each iteration if the
+  // condition is true. This way avoids having to re-expand the while loop on every
+  // iteration. However, this won't work because macros defined with \newcommand remove
+  // everything before the macro in parser.string, so if `code` contained a macro call,
+  // some of `code` would be removed and the jump back would fail.
+
+  // whileLoop is the code that was called, e.g., \whilebool{flag}{...}
+  const whileLoop = parser.string.slice(startI, parser.i);
+  const expanded = `${conditional}{${code}${whileLoop}}{\\loopbreak}`;
+  return expandLoop(parser, startI, expanded);
 }
 
 const EtoolboxMethods = {
@@ -205,7 +232,7 @@ const EtoolboxMethods = {
     const macro = Util.getMacro(parser, cs);
     // macro.func.length - 2 because first two arguments are parser and name
     const condition =
-      macro &&
+      macro !== undefined &&
       (withParams === undefined || withParams === !!(macro.func.length - 2));
     Util.ExpandConditionsBranch(parser, name, startI, condition);
   },
@@ -234,9 +261,9 @@ const EtoolboxMethods = {
     // See the source code for NewCommand in NewcommandMethods.ts and for Macro
     // in BaseMethods.ts (line 1837 at time of writing)
     const macroString = macro?.args?.[0] as string;
-    const condition =
-      (!macro && orVoid) ||
-      (macro.func.length === 2 && macroString.trim() === "");
+    let condition = false;
+    if (!macro) condition = orVoid;
+    else if (macro.func.length === 2) condition = macroString.trim() === "";
     Util.ExpandConditionsBranch(parser, name, startI, condition, orVoid);
   },
 
@@ -391,6 +418,7 @@ const EtoolboxMethods = {
     const star = parser.GetStar();
     const cs = Util.GetCsNameArgument(parser, name, true);
     const separator = parser.GetArgument(name);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     const func = EtoolboxMethods.ListParser;
     const args = [separator];
     if (star) args.push("\\do");
@@ -407,7 +435,7 @@ const EtoolboxMethods = {
     handler ??= parser.GetArgument(name);
     const listString = parser.GetArgument(name);
     const list = Util.separateList(listString, separator);
-    parser.Push(expandLoop(parser, startI, list, handler));
+    parser.Push(expandListLoop(parser, startI, list, handler));
   },
 
   NewList(parser: TexParser, name: string) {
@@ -432,7 +460,15 @@ const EtoolboxMethods = {
     const startI = parser.i - name.length;
     handler ??= parser.GetArgument(name);
     const list = Util.GetList(parser, name);
-    parser.Push(expandLoop(parser, startI, list, handler));
+    parser.Push(expandListLoop(parser, startI, list, handler));
+  },
+
+  WhileFlag(parser: TexParser, name: string, type: string, negate: boolean) {
+    const startI = parser.i - name.length;
+    const flag = Util.GetCsNameArgument(parser, name);
+    const code = parser.GetArgument(name);
+    const conditional = `${negate ? "\\not" : "\\if"}${type}{${flag}}`;
+    parser.Push(expandWhileLoop(parser, startI, code, conditional));
   },
 
   LoopBreak(parser: TexParser, name: string) {

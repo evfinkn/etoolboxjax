@@ -81,7 +81,12 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
   listremove: "ListRemove",
   dolistloop: ["ListLoop", "\\do"],
   forlistloop: "ListLoop",
-  loopbreak: "LoopBreak",
+  // Loops
+  whilebool: ["WhileFlag", "bool", false],
+  whiletoggle: ["WhileFlag", "toggle", false],
+  untilbool: ["WhileFlag", "bool", true],
+  untiltoggle: ["WhileFlag", "toggle", true],
+  loopbreak: "LoopBreak", // TODO: only add loopbreak in mapping when in a loop
   // List tests
   ifinlist: "IfInList",
   // Misc
@@ -99,6 +104,11 @@ const commands: CommandMapRecord<typeof EtoolboxMethods> = {
  */
 export const EtoolboxCommandMap = new CommandMap(
   ETOOLBOX_CMD_MAP,
+  // @ts-expect-error TypeScript gets mad because commands has some methods with
+  // optional arguments (and therefore the type of that argument is `| undefined`) but
+  // the CommandMap expects the value to be string | Args[] (Args doesn't allow
+  // undefined). I'm ignoring this because MathJax itself has optional arguments in its
+  // commands (see, for example, BaseMethods.Macro).
   commands,
   EtoolboxMethods,
 );

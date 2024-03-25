@@ -23,4 +23,10 @@ export default tseslint.config({
       ...globals.es2015,
     },
   },
+  rules: {
+    "@typescript-eslint/no-inferrable-types": [
+      "error",
+      { ignoreParameters: true },
+    ],
+  },
 });
