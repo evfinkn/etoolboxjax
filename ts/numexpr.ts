@@ -1,8 +1,8 @@
 type Op = "+" | "-" | "*" | "/" | "m"; // m for unary minus
-type OpInfo = {
+interface OpInfo {
   readonly prec: number;
   readonly assoc: "left" | "right";
-};
+}
 type OpOrParen = Op | "(" | ")";
 
 // If the expression has a length >= 2, the last element is always an operator
@@ -26,11 +26,12 @@ function isOperator(x: unknown): x is Op {
   return OPS.has(x as Op);
 }
 
-function shouldPopOp(opToken1: Op, opToken2: any): boolean {
+function shouldPopOp(opToken1: Op, opToken2: unknown): boolean {
   if (!(opToken2 && isOperator(opToken2))) return false;
 
   const op1 = OPS.get(opToken1);
   const op2 = OPS.get(opToken2);
+  if (!op1 || !op2) return false;
   return op2.prec > op1.prec || (op2.prec === op1.prec && op1.assoc === "left");
 }
 
@@ -44,14 +45,14 @@ export function postfixify(expression: string): PostfixExpression {
     // expression or immediately after an operator or opening parenthesis. We replace
     // odd numbers of "-" with "m". "+" and even numbers of "-" are removed, since
     // they are redundant.
-    .replace(/(?<=^|[-+*\/\(])([-+]+)/g, (_match, ops: string) => {
+    .replace(/(?<=^|[-+*/(])([-+]+)/g, (_match, ops: string) => {
       let minusCount = 0;
       for (const op of ops) {
         if (op === "-") minusCount++;
       }
       return minusCount % 2 == 0 ? "" : "m";
     })
-    .split(/([\(\)\+\-\*\/m])/)
+    .split(/([()+\-*/m])/)
     .filter((token) => token && token !== "")
     .forEach((token) => {
       const number = Number(token);
@@ -101,6 +102,10 @@ export function evaluatePostfix(expression: PostfixExpression): number {
     } else {
       const operand2 = stack.pop();
       const operand1 = stack.pop();
+      // Can't use !operand1 || !operand2 because 0 is falsy
+      if (operand1 === undefined || operand2 === undefined) {
+        throw new Error("Invalid expression");
+      }
       switch (token) {
         case "+":
           stack.push(operand1 + operand2);

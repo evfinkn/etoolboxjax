@@ -1,8 +1,8 @@
-import type { StackItem } from "mathjax-full/js/input/tex/StackItem.js";
 import type { Args, ParseMethod } from "mathjax-full/js/input/tex/Types.js";
 
 import { MathJax } from "mathjax-full/js/components/global.js";
 import ParseUtil from "mathjax-full/js/input/tex/ParseUtil.js";
+import { EnvList } from "mathjax-full/js/input/tex/StackItem.js";
 import TexError from "mathjax-full/js/input/tex/TexError.js";
 import TexParser from "mathjax-full/js/input/tex/TexParser.js";
 import { Macro } from "mathjax-full/js/input/tex/Token.js";
@@ -57,7 +57,7 @@ export class Counter {
   /** The counter that resets this counter's value, if any. */
   private _superCounter: Counter | null = null;
 
-  private _toString: () => string | null;
+  private _toString: (() => string) | null;
 
   /**
    * @param {string} name - The name of the counter.
@@ -129,6 +129,8 @@ export class Counter {
   }
 }
 
+// We can't control the type of MJCONFIG.counters so can't fix the eslint error.
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 Object.entries(MJCONFIG.counters || {}).forEach(([name, value]) => {
   if (typeof value === "number") {
     new Counter(name, null, value);
@@ -172,19 +174,6 @@ export function GetNumber(parser: TexParser, name: string): number {
   const result = GetNumberFromCS(parser, name);
   parser.i = stopI;
   return result;
-}
-
-/**
- * @param {StackItem} [item] The item to check.
- * @returns {boolean} Whether the item is a StackItem of kind "number" with a
- *   numeric property "number".
- */
-function isNumberItem(item?: StackItem): boolean {
-  return (
-    item &&
-    item.kind === "number" &&
-    typeof item.getProperty("number") === "number"
-  );
 }
 
 /**
@@ -247,7 +236,8 @@ export function GetNumberFromCS(
     parser.stack.Pop();
   } else if (newFirst !== oldFirst && newFirst.isKind("mn")) {
     // The text property doesn't officially exist, but it's there in the browser.
-    // @ts-ignore - Property 'text' does not exist on type 'MmlNode'.
+    // Ideally, we would use something type-safe, but this is the best way I found.
+    // @ts-expect-error - Property 'text' does not exist on type 'MmlNode'.
     number = Number(newFirst.childNodes[0].text);
     // Remove the output of the command since it was only used to get the number.
     if (oldTop !== newTop) parser.stack.Pop();
@@ -316,7 +306,7 @@ export function GetCsName(
   requireBackslash: boolean = false,
 ): string {
   let cs = ParseUtil.trimSpaces(str);
-  if (cs.charAt(0) === "\\") {
+  if (cs.startsWith("\\")) {
     cs = cs.substring(1);
   } else if (requireBackslash) {
     throw new TexError(
@@ -388,7 +378,7 @@ export function pushMath(parser: TexParser, math: string) {
 
 export function pushText(parser: TexParser, text: string) {
   const mathvariant = parser.stack.env.font || parser.stack.env.mathvariant;
-  const def = mathvariant ? { mathvariant } : {};
+  const def: EnvList = mathvariant ? { mathvariant } : {};
   parser.Push(ParseUtil.internalText(parser, text, def));
 }
 

@@ -8,7 +8,8 @@ export type NonParseParams<F> = F extends (
   parser: TexParser,
   name: string,
   ...args: infer R
-) => any
+  // Ignore no-explicit-any because we only care about argument types, not return type
+) => any // eslint-disable-line @typescript-eslint/no-explicit-any
   ? R
   : never;
 

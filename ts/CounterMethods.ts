@@ -24,6 +24,7 @@ const CounterMethods = {
     const superCounter = Util.GetCsNameBrackets(parser, name);
     new Counter(cs, superCounter);
     const theCs = `the${cs}`;
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     Util.addMacro(parser, COUNTER_MAP, theCs, Counter.the);
   },
 

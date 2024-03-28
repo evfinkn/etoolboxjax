@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/class-literal-property-style --
+ * We have to use accessors instead of readonly properties because BaseItem defines
+ * them as accessors. If we change them to instance properties, TypeScript complains
+ * with ts(2160). Since we can't change it, we have to disable the rule.
+ */
+
 import {
   BaseItem,
   CheckType,

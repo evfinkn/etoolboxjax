@@ -25,6 +25,11 @@ const commands: CommandMapRecord<typeof CounterMethods> = {
 
 export const CounterCommandMap = new CommandMap(
   COUNTER_CMD_MAP,
+  // @ts-expect-error TypeScript gets mad because commands has some methods with
+  // optional arguments (and therefore the type of that argument is `... | undefined`)
+  // but the CommandMap expects the value to be string | Args[] (Args doesn't allow
+  // undefined). I'm ignoring this because MathJax itself has optional arguments in its
+  // commands (see, for example, BaseMethods.Macro).
   commands,
   CounterMethods,
 );

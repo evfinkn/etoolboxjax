@@ -28,5 +28,9 @@ export default tseslint.config({
       "error",
       { ignoreParameters: true },
     ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+    ],
   },
 });
