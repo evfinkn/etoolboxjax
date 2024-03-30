@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     // "rootDir": "ts",
+    "skipLibCheck": true,
     "outDir": "js",
     "baseUrl": ".",
     "paths": {
