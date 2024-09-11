@@ -10,7 +10,7 @@
     "@babel/core": "^7.24.3",
     "@babel/preset-env": "^7.24.3",
     "babel-loader": "^9.1.3",
-    "mathjax-full": "^4.0.0-beta.4",
+    "mathjax-full": "4.0.0-beta.4",
     "typescript": "^5.4.3"
   },
   "devDependencies": {
